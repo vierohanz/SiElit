@@ -16,7 +16,6 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-
 import {
   Colors,
   DebugInstructions,
@@ -24,6 +23,8 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import Button from './src/components/Button';
+import Gap from './src/components/Gap';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -64,6 +65,9 @@ function App(): React.JSX.Element {
 
   return (
     <SafeAreaView style={backgroundStyle}>
+      {/*test component button dan Gap*/}
+      <Button width={300} />
+      <Gap height={100} />
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
