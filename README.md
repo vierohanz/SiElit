@@ -1,4 +1,10 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# SI ELIT
+This is a Mobile React Native Project, that handle client side applications for the administrative needs of the Bina Khoirul Insan Semarang student Islamic boarding school ([**PPM BKI**](https://ppmbki.com)).
+
+## Benefit of Feature
+Apart from handling administrative needs, this project also provides other benefits for students, parents and the Islamic boarding school foundation, such as:
+1. Helping parents of students to monitor attendance levels, and students' progress in participating in boarding school activities and lectures
+2. 
 
 # Getting Started
 
