@@ -13,13 +13,13 @@ import Svg, {
 function splash() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      navigation.navigate('Login');
-    }, 3000);
+  // React.useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     navigation.navigate('Login');
+  //   }, 3000);
 
-    return () => clearTimeout(timer);
-  }, [navigation]);
+  //   return () => clearTimeout(timer);
+  // }, [navigation]);
 
   return (
     <View style={tw`flex-1 items-center justify-center bg-[#13A89D] flex-col`}>
@@ -34,7 +34,7 @@ function splash() {
       <Svg height="100" width="300" style={{bottom: '14%'}}>
         <Defs>
           <LinearGradient id="grad" x1="0" y1="0" x2="0" y2="0.5">
-            <Stop offset="0" stopColor="#196E67" stopOpacity="0" />
+            <Stop offset="0" stopColor="#1A6A63" stopOpacity="0" />
             <Stop offset="1" stopColor="#07423E" stopOpacity="1" />
           </LinearGradient>
         </Defs>
