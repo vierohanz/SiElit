@@ -13,13 +13,13 @@ import Svg, {
 function splash() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-  // React.useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     navigation.navigate('Login');
-  //   }, 3000);
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      navigation.navigate('Login');
+    }, 3000);
 
-  //   return () => clearTimeout(timer);
-  // }, [navigation]);
+    return () => clearTimeout(timer);
+  }, [navigation]);
 
   return (
     <View style={tw`flex-1 items-center justify-center bg-[#13A89D] flex-col`}>
