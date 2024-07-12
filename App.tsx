@@ -3,28 +3,21 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import login from './src/pages/login';
 import splash from './src/pages/splash';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-import Button from './src/components/Button';
-import Gap from './src/components/Gap';
+import perizinan from './src/pages/perizinan';
+import target from './src/pages/target';
+import presensi from './src/pages/presensi';
+import home from './src/pages/home';
+import profile from './src/pages/settings/profile';
+import index from './src/pages/settings/index';
 export type RootStackParamList = {
   Splash: undefined;
   Login: undefined;
+  Index: undefined;
+  Home: undefined;
+  Presensi: undefined;
+  Target: undefined;
+  Perizinan: undefined;
+  Profile: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -42,6 +35,36 @@ export default function App() {
           options={{headerShown: false}}
           name="Login"
           component={login}
+        />
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="Home"
+          component={home}
+        />
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="Profile"
+          component={profile}
+        />
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="Presensi"
+          component={presensi}
+        />
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="Perizinan"
+          component={perizinan}
+        />
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="Target"
+          component={target}
+        />
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="Index"
+          component={index}
         />
       </Stack.Navigator>
     </NavigationContainer>
