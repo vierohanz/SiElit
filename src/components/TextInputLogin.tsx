@@ -1,5 +1,9 @@
 import React from 'react';
 import {TextInput, StyleSheet, TextInputProps} from 'react-native';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 
 interface TextInputLoginProps extends TextInputProps {
   placeholder: string;
@@ -28,14 +32,14 @@ const TextInputLogin: React.FC<TextInputLoginProps> = ({
 
 const styles = StyleSheet.create({
   input: {
-    marginTop: 3,
-    height: 45,
+    marginTop: wp('2%'),
+    height: hp('5.8%'),
     width: '80%',
     borderColor: '#ccc',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
     borderWidth: 1,
     elevation: 3,
     borderRadius: 5,
@@ -44,7 +48,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9f9f9',
     color: '#000000',
     fontWeight: '400',
-    fontSize: 15,
+    fontSize: wp('4%'),
+    paddingLeft: wp('5%'),
   },
 });
 

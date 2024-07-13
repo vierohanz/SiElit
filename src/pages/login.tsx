@@ -15,20 +15,22 @@ import TextInputLogin from '../components/TextInputLogin';
 import CheckboxRememberMe from '../components/RememberMe';
 import {useNavigation, NavigationProp} from '@react-navigation/native';
 import {RootStackParamList} from '../../App';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 
 // Untuk mengambil height layar
 const {height} = Dimensions.get('window');
 
 const Login: React.FC = () => {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>(); // Gunakan useNavigation di dalam komponen fungsional Login
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [rememberMe, setRememberMe] = React.useState(false);
 
   const handleLogin = () => {
-    // Contoh validasi sederhana
-
     navigation.navigate('Index');
   };
 
@@ -50,14 +52,19 @@ const Login: React.FC = () => {
               paddingTop: '30%',
               height: height * 0.3,
             }}>
-            <Text style={{fontWeight: 'bold', fontSize: 36, color: '#C7D021'}}>
+            <Text
+              style={{
+                fontWeight: 'bold',
+                fontSize: wp('10%'),
+                color: '#C7D021',
+              }}>
               Selamat Datang,
             </Text>
             <Text
               style={{
                 marginTop: '2%',
                 paddingRight: '30%',
-                fontSize: 16,
+                fontSize: wp('5%'),
                 fontWeight: '300',
                 color: '#ffffff',
               }}>
@@ -70,7 +77,7 @@ const Login: React.FC = () => {
               backgroundColor: '#ffffff',
               justifyContent: 'center',
               alignItems: 'center',
-              height: height * 0.73,
+              height: height * 0.735,
               borderBottomLeftRadius: 120,
               borderTopRightRadius: 250,
               padding: 20,
@@ -78,7 +85,7 @@ const Login: React.FC = () => {
             <Text
               style={{
                 fontWeight: 'bold',
-                fontSize: 26,
+                fontSize: wp('8%'),
                 color: '#13A89D',
                 marginBottom: 30,
               }}>

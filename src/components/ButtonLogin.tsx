@@ -1,5 +1,9 @@
 import React from 'react';
 import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
+import {
   TouchableOpacity,
   Text,
   StyleSheet,
@@ -23,8 +27,8 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#13A89D',
     marginTop: 25,
-    paddingVertical: 10,
-    paddingHorizontal: 32,
+    paddingVertical: wp('2.8%'),
+    paddingHorizontal: wp('10%'),
     borderRadius: 5,
     alignItems: 'center',
     borderTopLeftRadius: 20,
@@ -35,7 +39,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: wp('3.5%'),
     fontWeight: 'bold',
   },
 });

@@ -3,6 +3,7 @@ import {
   Alert,
   Animated,
   StyleSheet,
+  Dimensions,
   TouchableOpacity,
   View,
   Text,
@@ -15,6 +16,10 @@ import PresensiPage from '../presensi';
 import TargetPage from '../target';
 import PerizinanPage from '../perizinan';
 import ProfilePage from '../settings/profile';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 
 // Define valid icon names
 type IoniconName =
@@ -24,6 +29,22 @@ type IoniconName =
   | 'alarm'
   | 'person'
   | 'apps-sharp';
+
+const {height} = Dimensions.get('window');
+const getBottomMargin = () => {
+  if (height < 770) {
+    return 30;
+  } else {
+    return 80;
+  }
+};
+const getHeight = () => {
+  if (height < 770) {
+    return 55;
+  } else {
+    return 70;
+  }
+};
 
 const Index = () => {
   const _renderIcon = (routeName: string, selectedTab: string) => {
@@ -53,13 +74,13 @@ const Index = () => {
       <View style={styles.iconContainer}>
         <Ionicons
           name={icon}
-          size={22}
+          size={wp('5.8%')}
           color={routeName === selectedTab ? '#C7D021' : '#fff'}
         />
         <Text
           style={{
             color: routeName === selectedTab ? '#C7D021' : '#fff',
-            fontSize: 10,
+            fontSize: wp('3%'),
           }}>
           {label}
         </Text>
@@ -90,7 +111,7 @@ const Index = () => {
       type="DOWN"
       style={styles.bottomBar}
       shadowStyle={styles.shadow}
-      height={55}
+      height={getHeight()}
       circleWidth={50}
       bgColor="#13A89D"
       initialRouteName="home"
@@ -110,11 +131,13 @@ const Index = () => {
       }}
       tabBar={renderTabBar}>
       <CurvedBottomBar.Screen
+        options={{headerShown: false}}
         name="home"
         position="LEFT"
         component={HomePage}
       />
       <CurvedBottomBar.Screen
+        options={{headerShown: false}}
         name="presensi"
         position="LEFT"
         component={PresensiPage}
@@ -154,13 +177,13 @@ const styles = StyleSheet.create({
   },
   bottomBar: {},
   btnCircleUp: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: wp('16%'),
+    height: wp('16%'),
+    borderRadius: 45,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#13A89D',
-    bottom: 30,
+    bottom: getBottomMargin(),
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
