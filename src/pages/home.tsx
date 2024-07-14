@@ -9,14 +9,6 @@ import {
   ScrollView,
 } from 'react-native';
 import {
-  Table,
-  TableWrapper,
-  Row,
-  Rows,
-  Col,
-} from 'react-native-table-component';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
@@ -24,138 +16,125 @@ import CardNotif from '../components/CardNotif';
 import TableJadwal from '../components/Table';
 
 const {height, width} = Dimensions.get('window');
-function home() {
+
+// Data jadwal contoh
+const jadwalData = [
+  {
+    id: '1',
+    day: 'Senin',
+    time: '08:00',
+    title: 'Materi Pembelajaran',
+    timeRange: '08:00 - 10:00 WIB',
+    // tambahkan properti status atau properti lainnya yang dibutuhkan
+  },
+  {
+    id: '2',
+    day: 'Selasa',
+    time: '10:00',
+    title: 'Rapat Tim',
+    timeRange: '10:00 - 12:00 WIB',
+  },
+  // Tambahkan data jadwal lainnya sesuai kebutuhan
+];
+
+function Home() {
   return (
-    <ScrollView style={{flex: 1, backgroundColor: '#fff'}}>
-      <View style={{flex: 1, backgroundColor: '#fff'}}>
-        {/* Landing Page */}
-        <View
-          style={{
-            height: height * 0.43,
-            width: '100%',
-            marginBottom: hp('1.5%'),
-            borderBottomLeftRadius: 50,
-            borderBottomRightRadius: 50,
-
-            // Shadow for Android
-            shadowColor: '#000',
-            shadowOffset: {width: 0, height: 2},
-            shadowOpacity: 0.8,
-            shadowRadius: 4,
-            elevation: 15,
-          }}>
-          <ImageBackground
-            source={require('../assets/images/bg_blue.jpg')}
-            style={{
-              height: height * 0.43,
-              width: '100%',
-            }}
-            imageStyle={{
-              borderBottomLeftRadius: 50,
-              borderBottomRightRadius: 50,
-            }}>
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'space-between',
-              }}>
-              <View
-                style={{
-                  height: '50%',
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  paddingHorizontal: wp('3%'),
-                }}>
-                <View style={{marginTop: wp('15%'), width: width * 0.6}}>
-                  <Text
-                    style={{
-                      fontSize: wp('7%'),
-                      fontWeight: 'bold',
-                      color: '#fff',
-                    }}>
-                    Halo, Raishannan
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: wp('4%'),
-                      fontWeight: '300',
-                      color: '#fff',
-                    }}>
-                    Apakah anda siap menjadi mubaligh sarjana
-                  </Text>
-                </View>
-                <View style={styles.profileContainer}>
-                  <Image
-                    source={require('../assets/images/hannan.jpg')}
-                    style={styles.profileImage}
-                  />
-                </View>
-              </View>
-              <ImageBackground
-                source={require('../assets/images/mosque.png')}
-                style={{
-                  height: height * 0.21,
-                  width: '100%',
-                }}
-                imageStyle={{
-                  borderBottomLeftRadius: 50,
-                  borderBottomRightRadius: 50,
-                }}></ImageBackground>
+    <ScrollView style={styles.container}>
+      {/* Landing Page */}
+      <View style={styles.landingContainer}>
+        <ImageBackground
+          source={require('../assets/images/bg_blue.jpg')}
+          style={styles.landingImageBackground}
+          imageStyle={styles.landingImageStyle}>
+          <View style={styles.contentContainer}>
+            <View style={styles.textContainer}>
+              <Text style={styles.welcomeText}>Halo, Raishannan</Text>
+              <Text style={styles.subText}>
+                Apakah anda siap menjadi mubaligh sarjana
+              </Text>
             </View>
-          </ImageBackground>
-        </View>
-
-        {/* Notification */}
-        <View style={{marginTop: hp('0.5%'), paddingHorizontal: 10}}>
-          <Text
-            style={{
-              fontSize: wp('5%'),
-              fontWeight: '800',
-              color: '#000',
-              marginBottom: 10,
-            }}>
-            Notification
-          </Text>
-          <CardNotif />
-        </View>
-
-        {/* Jadwal Kelas */}
-        <View
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginTop: hp('2%'),
-          }}>
-          <View
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexDirection: 'row',
-            }}>
-            <Text
-              style={{fontSize: wp('6%'), fontWeight: '800', color: '#000'}}>
-              Jadwal
-            </Text>
-            <Text
-              style={{
-                marginLeft: wp('1%'),
-                fontSize: wp('6%'),
-                fontWeight: '900',
-                color: '#13A89D',
-              }}>
-              Kelas
-            </Text>
+            <View style={styles.profileContainer}>
+              <Image
+                source={require('../assets/images/hannan.jpg')}
+                style={styles.profileImage}
+              />
+            </View>
           </View>
-          <TableJadwal />
+          <ImageBackground
+            source={require('../assets/images/mosque.png')}
+            style={styles.bottomImageBackground}
+            imageStyle={styles.bottomImageStyle}
+          />
+        </ImageBackground>
+      </View>
+
+      {/* Notification */}
+      <View style={styles.notificationContainer}>
+        <Text style={styles.notificationTitle}>Notification</Text>
+        {jadwalData.map(item => (
+          <CardNotif key={item.id} item={item} />
+        ))}
+      </View>
+
+      {/* Jadwal Kelas */}
+      <View style={styles.scheduleContainer}>
+        <View style={styles.scheduleTitleContainer}>
+          <Text style={styles.scheduleTitle}>Jadwal</Text>
+          <Text style={styles.scheduleSubtitle}>Kelas</Text>
         </View>
+        <TableJadwal />
       </View>
     </ScrollView>
   );
 }
+
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  landingContainer: {
+    height: height * 0.43,
+    width: '100%',
+    marginBottom: hp('1.5%'),
+    borderBottomLeftRadius: 50,
+    borderBottomRightRadius: 50,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.8,
+    shadowRadius: 4,
+    elevation: 15,
+  },
+  landingImageBackground: {
+    height: height * 0.43,
+    width: '100%',
+  },
+  landingImageStyle: {
+    borderBottomLeftRadius: 50,
+    borderBottomRightRadius: 50,
+  },
+  contentContainer: {
+    flex: 1,
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    paddingHorizontal: wp('3%'),
+  },
+  textContainer: {
+    marginTop: wp('15%'),
+    width: width * 0.6,
+  },
+  welcomeText: {
+    fontSize: wp('7%'),
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  subText: {
+    marginTop: '2%',
+    paddingRight: wp('10%'),
+    fontSize: wp('4%'),
+    fontWeight: '300',
+    color: '#fff',
+  },
   profileContainer: {
     marginLeft: 10,
     marginTop: wp('15%'),
@@ -167,5 +146,44 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
     borderWidth: 1,
   },
+  bottomImageBackground: {
+    height: height * 0.21,
+    width: '100%',
+  },
+  bottomImageStyle: {
+    borderBottomLeftRadius: 50,
+    borderBottomRightRadius: 50,
+  },
+  notificationContainer: {
+    marginTop: hp('0.5%'),
+    paddingHorizontal: 10,
+  },
+  notificationTitle: {
+    fontSize: wp('5%'),
+    fontWeight: '800',
+    color: '#000',
+    marginBottom: 10,
+  },
+  scheduleContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: hp('2%'),
+  },
+  scheduleTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  scheduleTitle: {
+    fontSize: wp('6%'),
+    fontWeight: '800',
+    color: '#000',
+  },
+  scheduleSubtitle: {
+    marginLeft: wp('1%'),
+    fontSize: wp('6%'),
+    fontWeight: '900',
+    color: '#13A89D',
+  },
 });
-export default home;
+
+export default Home;

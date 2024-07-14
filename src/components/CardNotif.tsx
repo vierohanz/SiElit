@@ -1,25 +1,39 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {PanGestureHandler, State} from 'react-native-gesture-handler';
+import {useNavigation} from '@react-navigation/native';
+import {View, Text, StyleSheet, Animated, TouchableOpacity} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
-const CardNotif = () => {
+// Definisikan tipe untuk properti item
+interface CardNotifProps {
+  item: {
+    id: string;
+    day: string;
+    time: string;
+    title: string;
+    timeRange: string;
+    // tambahkan properti status atau properti lainnya yang dibutuhkan
+  };
+}
+
+const CardNotif: React.FC<CardNotifProps> = ({item}) => {
   return (
     <View style={styles.container}>
       <View style={styles.timeContainer}>
-        <Text style={styles.dayText}>Sen</Text>
-        <Text style={styles.timeText}>18:30</Text>
+        <Text style={styles.dayText}>{item.day.substring(0, 3)}</Text>
+        <Text style={styles.timeText}>{item.time}</Text>
       </View>
       <View style={styles.separator}></View>
       <View style={styles.detailsContainer}>
         <View style={styles.titleContainer}>
           <Ionicons name={'library'} size={wp('6%')} color={'#B8B8B8'} />
-          <Text style={styles.titleText}>Mengaji Lambatan</Text>
+          <Text style={styles.titleText}>{item.title}</Text>
         </View>
-        <Text style={styles.timeRangeText}>19:30 - 21:30</Text>
+        <Text style={styles.timeRangeText}>{item.timeRange}</Text>
       </View>
     </View>
   );
@@ -27,7 +41,6 @@ const CardNotif = () => {
 
 const styles = StyleSheet.create({
   container: {
-    display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
@@ -46,7 +59,6 @@ const styles = StyleSheet.create({
   timeContainer: {
     height: '100%',
     marginLeft: wp('2%'),
-    display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -70,7 +82,6 @@ const styles = StyleSheet.create({
     marginLeft: wp('2%'),
   },
   titleContainer: {
-    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
   },

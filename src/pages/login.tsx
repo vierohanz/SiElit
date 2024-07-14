@@ -1,8 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
-  Alert,
   StyleSheet,
   Dimensions,
   KeyboardAvoidingView,
@@ -20,15 +19,14 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
-// Untuk mengambil height layar
 const {height} = Dimensions.get('window');
 
 const Login: React.FC = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-  const [username, setUsername] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [rememberMe, setRememberMe] = React.useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
 
   const handleLogin = () => {
     navigation.navigate('Index');
@@ -45,52 +43,15 @@ const Login: React.FC = () => {
       <ScrollView
         contentContainerStyle={tw`bg-[#13A89D] h-full`}
         keyboardShouldPersistTaps="handled">
-        <View style={tw`bg-[#13A89D] h-full flex-1 flex-col`}>
-          <View
-            style={{
-              paddingLeft: '5%',
-              paddingTop: '30%',
-              height: height * 0.3,
-            }}>
-            <Text
-              style={{
-                fontWeight: 'bold',
-                fontSize: wp('10%'),
-                color: '#C7D021',
-              }}>
-              Selamat Datang,
-            </Text>
-            <Text
-              style={{
-                marginTop: '2%',
-                paddingRight: '30%',
-                fontSize: wp('5%'),
-                fontWeight: '300',
-                color: '#ffffff',
-              }}>
+        <View style={styles.container}>
+          <View style={styles.welcomeContainer}>
+            <Text style={styles.welcomeText}>Selamat Datang,</Text>
+            <Text style={styles.infoText}>
               Mohon masukkan akun anda terlebih dahulu
             </Text>
           </View>
-          <View
-            style={{
-              marginTop: 20,
-              backgroundColor: '#ffffff',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: height * 0.735,
-              borderBottomLeftRadius: 120,
-              borderTopRightRadius: 250,
-              padding: 20,
-            }}>
-            <Text
-              style={{
-                fontWeight: 'bold',
-                fontSize: wp('8%'),
-                color: '#13A89D',
-                marginBottom: 30,
-              }}>
-              Sign In
-            </Text>
+          <View style={styles.signInContainer}>
+            <Text style={styles.signInText}>Sign In</Text>
             <TextInputLogin
               placeholder="NIS"
               value={username}
@@ -102,7 +63,7 @@ const Login: React.FC = () => {
               onChangeText={setPassword}
               secureTextEntry
             />
-            <View style={{width: '78%'}}>
+            <View style={styles.rememberMeContainer}>
               <CheckboxRememberMe
                 checked={rememberMe}
                 onChange={toggleRememberMe}
@@ -115,5 +76,48 @@ const Login: React.FC = () => {
     </KeyboardAvoidingView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#13A89D',
+  },
+  welcomeContainer: {
+    paddingLeft: '5%',
+    paddingTop: '30%',
+    height: height * 0.3,
+  },
+  welcomeText: {
+    fontWeight: 'bold',
+    fontSize: wp('10%'),
+    color: '#C7D021',
+  },
+  infoText: {
+    marginTop: '2%',
+    paddingRight: '30%',
+    fontSize: wp('5%'),
+    fontWeight: '300',
+    color: '#ffffff',
+  },
+  signInContainer: {
+    marginTop: 20,
+    backgroundColor: '#ffffff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: height * 0.735,
+    borderBottomLeftRadius: 120,
+    borderTopRightRadius: 250,
+    padding: 20,
+  },
+  signInText: {
+    fontWeight: 'bold',
+    fontSize: wp('8%'),
+    color: '#13A89D',
+    marginBottom: 30,
+  },
+  rememberMeContainer: {
+    width: '78%',
+  },
+});
 
 export default Login;

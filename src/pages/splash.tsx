@@ -1,8 +1,14 @@
 import * as React from 'react';
-import {View, Image, Text, StatusBar, Dimensions} from 'react-native';
+import {
+  View,
+  Image,
+  Text,
+  StatusBar,
+  Dimensions,
+  StyleSheet,
+} from 'react-native';
 import {useNavigation, NavigationProp} from '@react-navigation/native';
 import {RootStackParamList} from '../../App';
-import tw from 'twrnc';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -13,7 +19,7 @@ import Svg, {
   LinearGradient,
   Stop,
 } from 'react-native-svg';
-const {height, width} = Dimensions.get('window');
+
 function splash() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
@@ -26,15 +32,7 @@ function splash() {
   }, [navigation]);
 
   return (
-    <View
-      style={{
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#13A89D',
-      }}>
+    <View style={styles.container}>
       <StatusBar
         barStyle="light-content"
         backgroundColor="rgba(0, 0, 0, 0.2)"
@@ -42,11 +40,7 @@ function splash() {
       />
       <Image
         source={require('../assets/images/splash.png')}
-        style={{
-          width: wp('45%'),
-          height: wp('45%'),
-          resizeMode: 'contain',
-        }}
+        style={styles.logo}
       />
       <Svg height={hp('7%')} width={wp('40%')} style={{}}>
         <Defs>
@@ -69,4 +63,19 @@ function splash() {
   );
 }
 
+const styles = StyleSheet.create({
+  container: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#13A89D',
+  },
+  logo: {
+    width: wp('45%'),
+    height: wp('45%'),
+    resizeMode: 'contain',
+  },
+});
 export default splash;
