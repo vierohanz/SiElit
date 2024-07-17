@@ -16,7 +16,6 @@ interface CardNotifProps {
     time: string;
     title: string;
     timeRange: string;
-    // tambahkan properti status atau properti lainnya yang dibutuhkan
   };
 }
 

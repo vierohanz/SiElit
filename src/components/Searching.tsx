@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.3,
     shadowRadius: 5,
-    elevation: 5,
+    elevation: 7,
     color: '#000',
     fontSize: wp('4.5%'),
   },

@@ -10,12 +10,12 @@ import {
   TouchableOpacityProps,
 } from 'react-native';
 
-interface ButtonLoginProps extends TouchableOpacityProps {
+interface ButtonIzinProps extends TouchableOpacityProps {
   title: string;
   onPress: () => void;
 }
 
-const ButtonLogin: React.FC<ButtonLoginProps> = ({title, onPress, ...rest}) => {
+const ButtonIzin: React.FC<ButtonIzinProps> = ({title, onPress, ...rest}) => {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress} {...rest}>
       <Text style={styles.buttonText}>{title}</Text>
@@ -25,23 +25,24 @@ const ButtonLogin: React.FC<ButtonLoginProps> = ({title, onPress, ...rest}) => {
 
 const styles = StyleSheet.create({
   button: {
+    marginHorizontal: wp('30%'),
     backgroundColor: '#13A89D',
-    marginTop: 30,
+    marginTop: 25,
     paddingVertical: wp('2.8%'),
-    paddingHorizontal: wp('10%'),
+    paddingHorizontal: wp('5%'),
     borderRadius: 5,
     alignItems: 'center',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    borderBottomRightRadius: 20,
-    elevation: 3,
-    borderBottomLeftRadius: 20,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    borderBottomRightRadius: 15,
+    elevation: 5,
+    borderBottomLeftRadius: 15,
   },
   buttonText: {
     color: '#fff',
-    fontSize: wp('3.5%'),
+    fontSize: wp('4%'),
     fontWeight: 'bold',
   },
 });
 
-export default ButtonLogin;
+export default ButtonIzin;

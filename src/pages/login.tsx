@@ -21,7 +21,7 @@ import {
 
 const {height} = Dimensions.get('window');
 
-const Login: React.FC = () => {
+const Login = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   const [username, setUsername] = useState('');

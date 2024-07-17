@@ -7,28 +7,22 @@ import {
 } from 'react-native-responsive-screen';
 
 type CardPresensiProps = {
-  day: string;
-  time: string;
-  title: string;
-  timeRange: string;
-  status: string;
-  updateTime: string;
-  date: string;
+  item: {
+    day: string;
+    time: string;
+    title: string;
+    timeRange: string;
+    status: string;
+    updateTime: string;
+    date: string;
+  };
 };
 
-const CardPresensi: React.FC<CardPresensiProps> = ({
-  day,
-  time,
-  title,
-  timeRange,
-  status,
-  updateTime,
-  date,
-}) => {
+const CardPresensi: React.FC<CardPresensiProps> = ({item}) => {
   let statusColor = '#000';
-  if (status === 'Hadir') {
+  if (item.status === 'Hadir') {
     statusColor = '#2DCF2A';
-  } else if (status === 'Absen') {
+  } else if (item.status === 'Absen') {
     statusColor = '#FF0000';
   }
 
@@ -36,26 +30,26 @@ const CardPresensi: React.FC<CardPresensiProps> = ({
     <View style={styles.cardContainer}>
       <View style={styles.innerContainer}>
         <View style={styles.timeContainer}>
-          <Text style={styles.dayText}>{day}</Text>
-          <Text style={styles.timeText}>{time}</Text>
+          <Text style={styles.dayText}>{item.day}</Text>
+          <Text style={styles.timeText}>{item.time}</Text>
         </View>
         <View style={styles.separator}></View>
         <View style={styles.detailsContainer}>
           <View style={styles.titleContainer}>
             <Ionicons name={'library'} size={wp('6%')} color={'#B8B8B8'} />
-            <Text style={styles.titleText}>{title}</Text>
+            <Text style={styles.titleText}>{item.title}</Text>
           </View>
-          <Text style={styles.timeRangeText}>{timeRange}</Text>
+          <Text style={styles.timeRangeText}>{item.timeRange}</Text>
           <View style={styles.statusContainer}>
             <Text style={[styles.statusText, {color: statusColor}]}>
-              {status}
+              {item.status}
             </Text>
-            <Text style={styles.timeComing}>({updateTime})</Text>
+            <Text style={styles.timeComing}>({item.updateTime})</Text>
           </View>
         </View>
       </View>
       <View>
-        <Text style={styles.dateText}>{date}</Text>
+        <Text style={styles.dateText}>{item.date}</Text>
       </View>
     </View>
   );

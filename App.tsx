@@ -38,26 +38,6 @@ export default function App() {
         />
         <Stack.Screen
           options={{headerShown: false}}
-          name="Home"
-          component={home}
-        />
-        <Stack.Screen
-          options={{headerShown: false}}
-          name="Profile"
-          component={profile}
-        />
-        <Stack.Screen
-          options={{headerShown: false}}
-          name="Presensi"
-          component={presensi}
-        />
-        <Stack.Screen
-          options={{headerShown: false}}
-          name="Perizinan"
-          component={perizinan}
-        />
-        <Stack.Screen
-          options={{headerShown: false}}
           name="Target"
           component={target}
         />

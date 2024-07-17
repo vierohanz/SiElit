@@ -20,7 +20,7 @@ import Svg, {
   Stop,
 } from 'react-native-svg';
 
-function splash() {
+const Splash = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   React.useEffect(() => {
@@ -61,7 +61,7 @@ function splash() {
       </Svg>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -78,4 +78,4 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
 });
-export default splash;
+export default Splash;

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, FlatList} from 'react-native';
+import {View, Text, StyleSheet, FlatList, ScrollView} from 'react-native';
 import CardPresensi from '../components/CardPresensi';
 import Searching from '../components/Searching';
 import HorizontalList from '../components/HorizontalList';
@@ -9,14 +9,8 @@ import {
 } from 'react-native-responsive-screen';
 
 const data1 = [
-  {
-    id: '1',
-    title: 'Semua',
-  },
-  {
-    id: '2',
-    title: 'Hari Ini',
-  },
+  {id: '1', title: 'Semua'},
+  {id: '2', title: 'Hari Ini'},
 ];
 
 type PresensiItem = {
@@ -30,7 +24,7 @@ type PresensiItem = {
   date: string;
 };
 
-const data: PresensiItem[] = [
+const data = [
   {
     id: '1',
     day: 'Sen',
@@ -49,21 +43,11 @@ const data: PresensiItem[] = [
     timeRange: '09:00 - 11:00',
     status: 'Absen',
     updateTime: '09:10',
-    date: '2024-07-22', // Format ISO 8601 date
-  },
-  {
-    id: '3',
-    day: 'Sel',
-    time: '09:00',
-    title: 'Diskusi Kelompok',
-    timeRange: '09:00 - 11:00',
-    status: 'Absen',
-    updateTime: '09:10',
-    date: '2024-07-14', // Format ISO 8601 date
+    date: '2024-07-16', // Format ISO 8601 date
   },
 ];
 
-const Presensi: React.FC = () => {
+const Presensi = () => {
   const [selectedFilter, setSelectedFilter] = useState<string | null>('1'); // Default selected filter 'Semua'
   const [searchText, setSearchText] = useState<string>(''); // State untuk nilai pencarian
 
@@ -76,15 +60,7 @@ const Presensi: React.FC = () => {
   };
 
   const renderItem = ({item}: {item: PresensiItem}) => (
-    <CardPresensi
-      day={item.day}
-      time={item.time}
-      title={item.title}
-      timeRange={item.timeRange}
-      status={item.status}
-      updateTime={item.updateTime}
-      date={item.date}
-    />
+    <CardPresensi key={item.id} item={item} />
   );
 
   let filteredData = data;
@@ -113,18 +89,20 @@ const Presensi: React.FC = () => {
   );
 
   return (
-    <View style={{flex: 1, backgroundColor: '#fff'}}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Presensi</Text>
-        <Searching onSearch={handleSearch} />
+    <ScrollView style={{backgroundColor: '#fff'}}>
+      <View style={{flex: 1, paddingBottom: hp('15%')}}>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Presensi</Text>
+          <Searching onSearch={handleSearch} />
+        </View>
+        <HorizontalList
+          data={data1}
+          onSelect={handleFilterSelect}
+          selectedId={selectedFilter}
+          renderCard={renderCard}
+        />
       </View>
-      <HorizontalList
-        data={data1}
-        onSelect={handleFilterSelect}
-        selectedId={selectedFilter}
-        renderCard={renderCard}
-      />
-    </View>
+    </ScrollView>
   );
 };
 
@@ -136,7 +114,6 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative',
   },
   headerText: {
     fontSize: wp('6%'),

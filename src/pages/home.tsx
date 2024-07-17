@@ -25,7 +25,6 @@ const jadwalData = [
     time: '08:00',
     title: 'Materi Pembelajaran',
     timeRange: '08:00 - 10:00 WIB',
-    // tambahkan properti status atau properti lainnya yang dibutuhkan
   },
   {
     id: '2',
@@ -34,10 +33,9 @@ const jadwalData = [
     title: 'Rapat Tim',
     timeRange: '10:00 - 12:00 WIB',
   },
-  // Tambahkan data jadwal lainnya sesuai kebutuhan
 ];
 
-function Home() {
+const Home = () => {
   return (
     <ScrollView style={styles.container}>
       {/* Landing Page */}
@@ -86,7 +84,7 @@ function Home() {
       </View>
     </ScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

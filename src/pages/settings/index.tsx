@@ -20,6 +20,15 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+
+export type RootStackParamList = {
+  home: undefined;
+  presensi: undefined;
+  perizinan: undefined;
+  profile: undefined;
+  target: undefined;
+};
 
 // Define valid icon names
 type IoniconName =
@@ -143,6 +152,7 @@ const Index = () => {
         component={PresensiPage}
       />
       <CurvedBottomBar.Screen
+        options={{headerShown: false}}
         name="perizinan"
         position="RIGHT"
         component={PerizinanPage}
