@@ -56,7 +56,7 @@ const Splash = () => {
           x="50%"
           y="50%"
           textAnchor="middle">
-          SIELITE
+          SIELIT
         </SvgText>
       </Svg>
     </View>
