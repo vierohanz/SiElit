@@ -161,7 +161,6 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontSize: wp('3.1%'),
     color: '#B8B8B8',
-    marginTop: wp('1%'),
     marginRight: wp('10%'),
   },
   description: {

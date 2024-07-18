@@ -158,6 +158,7 @@ const Index = () => {
         component={PerizinanPage}
       />
       <CurvedBottomBar.Screen
+        options={{headerShown: false}}
         name="profile"
         position="RIGHT"
         component={ProfilePage}
