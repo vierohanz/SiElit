@@ -22,8 +22,12 @@ const CardPresensi: React.FC<CardPresensiProps> = ({item}) => {
   let statusColor = '#000';
   if (item.status === 'Hadir') {
     statusColor = '#2DCF2A';
-  } else if (item.status === 'Absen') {
+  } else if (item.status === 'Tidak Hadir') {
     statusColor = '#FF0000';
+  } else if (item.status === 'Izin') {
+    statusColor = '#0047FF';
+  } else if (item.status === 'Terlambat') {
+    statusColor = '#C7D021';
   }
 
   return (

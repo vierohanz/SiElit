@@ -8,7 +8,7 @@ import target from './src/pages/target';
 import presensi from './src/pages/presensi';
 import home from './src/pages/home';
 import profile from './src/pages/settings/profile';
-import index from './src/pages/settings/index';
+import index from './src/pages/';
 export type RootStackParamList = {
   Splash: undefined;
   Login: undefined;

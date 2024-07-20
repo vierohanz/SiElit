@@ -41,9 +41,29 @@ const data = [
     time: '09:00',
     title: 'Diskusi Kelompok',
     timeRange: '09:00 - 11:00',
-    status: 'Absen',
+    status: 'Izin',
     updateTime: '09:10',
     date: '2024-07-16', // Format ISO 8601 date
+  },
+  {
+    id: '3',
+    day: 'Kam',
+    time: '10:00',
+    title: 'Pengajian IT',
+    timeRange: '09:00 - 12:00',
+    status: 'Tidak Hadir',
+    updateTime: '09:10',
+    date: '2024-07-18', // Format ISO 8601 date
+  },
+  {
+    id: '3',
+    day: 'Kam',
+    time: '12:00',
+    title: 'Pengajian IT',
+    timeRange: '10:00 - 12:00',
+    status: 'Terlambat',
+    updateTime: '10:10',
+    date: '2024-07-18', // Format ISO 8601 date
   },
 ];
 

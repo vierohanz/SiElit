@@ -7,7 +7,7 @@ import {
 import TextInputIzin from '../components/TextInputIzin';
 import ButtonIzin from '../components/ButtonIzin';
 import {useNavigation, NavigationProp} from '@react-navigation/native';
-import {RootStackParamList} from './settings/index';
+import {RootStackParamList} from './index';
 import DocumentPicker, {
   DocumentPickerResponse,
 } from 'react-native-document-picker';

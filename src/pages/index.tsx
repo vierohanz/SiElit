@@ -11,11 +11,11 @@ import {
 import {CurvedBottomBar} from 'react-native-curved-bottom-bar';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Target} from 'react-native-feather';
-import HomePage from '../home';
-import PresensiPage from '../presensi';
-import TargetPage from '../target';
-import PerizinanPage from '../perizinan';
-import ProfilePage from '../settings/profile';
+import HomePage from './home';
+import PresensiPage from './presensi';
+import TargetPage from './target';
+import PerizinanPage from './perizinan';
+import ProfilePage from './settings/profile';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,

@@ -13,34 +13,71 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const data: ProfilePros[] = [
+const datadiri: ProfilePros[] = [
+  // Data Diri
   {
     id: '1',
-    image: require('../../assets/images/hannan.jpg'),
-    text: 'Item 1',
+    icon: 'mail-outline',
+    color: '#C7D02190',
+    text: 'johndoe@gmail.com',
   },
   {
     id: '2',
-    image: require('../../assets/images/hannan.jpg'),
-    text: 'Item 2',
+    icon: 'call-outline',
+    color: '#13A89D90',
+    text: '+6289504469254',
   },
   {
     id: '3',
-    image: require('../../assets/images/hannan.jpg'),
-    text: 'Item 3',
+    icon: 'locate',
+    color: '#94008E80',
+    text: 'Ds. Manokwari Rt 01 / Rw 03',
   },
-  // Add more items as needed
+];
+
+const datalainnya: ProfilePros[] = [
+  // Data Diri
+  {
+    id: '1',
+    icon: 'create-outline',
+    color: '#0047FF60',
+    text: 'Edit Data',
+  },
+  {
+    id: '2',
+    icon: 'ribbon-outline',
+    color: '#45E62B80',
+    text: 'IPK',
+  },
+  {
+    id: '3',
+    icon: 'calendar-number-outline',
+    color: '#FF00F560',
+    text: 'Kalender Akademik',
+  },
 ];
 type ProfilePros = {
   id: string;
-  image: any;
+  icon: string;
+  color: string;
   text: string;
 };
 const Profile = () => {
-  const renderItem: ListRenderItem<ProfilePros> = ({item}) => (
+  const renderItemDataDiri: ListRenderItem<ProfilePros> = ({item}) => (
     <View style={styles.listItemContainer}>
-      <Image source={item.image} style={styles.listItemImage} />
+      <View style={[styles.listItemIcon, {backgroundColor: item.color}]}>
+        <Ionicons name={item.icon} size={wp('7.8%')} color={'#FFFFFF'} />
+      </View>
+      <Text style={styles.listItemText}>{item.text}</Text>
+    </View>
+  );
+  const renderItemLainnya: ListRenderItem<ProfilePros> = ({item}) => (
+    <View style={styles.listItemContainer}>
+      <View style={[styles.listItemIcon, {backgroundColor: item.color}]}>
+        <Ionicons name={item.icon} size={wp('7.8%')} color={'#FFFFFF'} />
+      </View>
       <Text style={styles.listItemText}>{item.text}</Text>
     </View>
   );
@@ -50,7 +87,7 @@ const Profile = () => {
       <View style={styles.headerContainer}>
         <ImageBackground
           style={styles.headerBackground}
-          source={require('../../assets/images/bg_profile.jpg')}
+          source={require('../../assets/images/bg_profile2.jpg')}
           resizeMode="cover">
           <View style={styles.profileImageContainer}>
             <ImageBackground
@@ -88,8 +125,16 @@ const Profile = () => {
         <Text style={styles.dataLabel}>Data Diri</Text>
         <View style={styles.listContainer}>
           <FlatList
-            data={data}
-            renderItem={renderItem}
+            data={datadiri}
+            renderItem={renderItemDataDiri}
+            keyExtractor={item => item.id}
+          />
+        </View>
+        <Text style={styles.dataLabel}>Lainnya</Text>
+        <View style={styles.listContainer}>
+          <FlatList
+            data={datalainnya}
+            renderItem={renderItemLainnya}
             keyExtractor={item => item.id}
           />
         </View>
@@ -107,15 +152,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
   },
   headerBackground: {
-    height: '100%',
-    width: '100%',
+    height: hp('100%'),
+    width: wp('100%'),
     display: 'flex',
+    marginVertical: -hp('50%'),
+    paddingTop: hp('40%'),
     justifyContent: 'center',
     alignItems: 'center',
   },
   profileImageContainer: {
     height: hp('14%'),
-    width: wp('30%'),
+    width: hp('14%'),
     backgroundColor: '#000',
     borderRadius: 70,
     overflow: 'hidden',
@@ -126,15 +173,15 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   profileName: {
-    marginTop: hp('2%'),
+    marginTop: hp('1%'),
     fontSize: wp('5.3%'),
-    fontWeight: 'bold',
+    fontFamily: 'Poppins-Bold',
     color: '#fff',
   },
   profileInfoContainer: {
     display: 'flex',
     flexDirection: 'row',
-    marginBottom: hp('5%'),
+    marginVertical: hp('-1%'),
   },
   profileInfoText: {
     fontSize: wp('3.3%'),
@@ -150,7 +197,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
-    marginTop: hp('-5%'),
     alignItems: 'center',
   },
   statsContainer: {
@@ -206,6 +252,7 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontSize: wp('3.5%'),
+    fontFamily: 'Poppins-Regular',
     color: '#000',
   },
   kafarohValueContainer: {
@@ -222,16 +269,16 @@ const styles = StyleSheet.create({
     color: '#13A89D',
   },
   dataContainer: {
-    height: hp('70%'),
+    height: hp('75%'), // Hati-hati dengan Ini
     width: wp('100%'),
     backgroundColor: '#fff',
     paddingHorizontal: 10,
-    paddingVertical: 15,
   },
   dataLabel: {
-    color: '#B8B8B8',
+    fontFamily: 'Poppins-SemiBold',
     fontSize: wp('4%'),
-    fontWeight: 'bold',
+    color: '#B8B8B8',
+    // fontWeight: 'bold',
   },
   listContainer: {
     paddingVertical: hp('1%'),
@@ -242,20 +289,24 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderColor: '#E3E3E3',
     borderWidth: 1,
+    marginBottom: hp('1%'),
   },
   listItemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: hp('1%'),
   },
-  listItemImage: {
-    width: wp('15%'),
-    height: wp('15%'),
-    borderRadius: 10,
-    marginRight: wp('4%'),
+  listItemIcon: {
+    height: wp('10.8%'),
+    width: wp('10.8%'),
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 15,
   },
   listItemText: {
     fontSize: wp('4%'),
+    fontFamily: 'Poppins-Regular',
+    paddingLeft: 17,
     color: '#000',
   },
 });
