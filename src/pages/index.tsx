@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Alert,
   Animated,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
   Text,
+  Keyboard,
 } from 'react-native';
 import {CurvedBottomBar} from 'react-native-curved-bottom-bar';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -56,6 +57,28 @@ const getHeight = () => {
 };
 
 const Index = () => {
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true);
+      },
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false);
+      },
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+
   const _renderIcon = (routeName: string, selectedTab: string) => {
     let icon: IoniconName = 'home';
     let label = '';
@@ -118,7 +141,7 @@ const Index = () => {
   return (
     <CurvedBottomBar.Navigator
       type="DOWN"
-      style={styles.bottomBar}
+      style={[styles.bottomBar, {display: isKeyboardVisible ? 'none' : 'flex'}]}
       shadowStyle={styles.shadow}
       height={getHeight()}
       circleWidth={50}
@@ -186,7 +209,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
-  bottomBar: {},
+  bottomBar: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
   btnCircleUp: {
     width: wp('16%'),
     height: wp('16%'),
