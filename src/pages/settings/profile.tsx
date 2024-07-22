@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -8,12 +8,18 @@ import {
   ScrollView,
   FlatList,
   ListRenderItem,
+  TouchableOpacity,
 } from 'react-native';
+import BottomSheet, {
+  BottomSheetModal,
+  BottomSheetModalProvider,
+  BottomSheetBackdrop,
+} from '@gorhom/bottom-sheet';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const datadiri: ProfilePros[] = [
   // Data Diri
@@ -57,6 +63,12 @@ const datalainnya: ProfilePros[] = [
     color: '#FF00F560',
     text: 'Kalender Akademik',
   },
+  {
+    id: '4',
+    icon: 'log-out-outline',
+    color: '#FFA6A6',
+    text: 'Sign Out',
+  },
 ];
 type ProfilePros = {
   id: string;
@@ -65,6 +77,12 @@ type ProfilePros = {
   text: string;
 };
 const Profile = () => {
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
+  const handlePresentModalPress = () => {
+    bottomSheetModalRef.current?.present();
+  };
+
   const renderItemDataDiri: ListRenderItem<ProfilePros> = ({item}) => (
     <View style={styles.listItemContainer}>
       <View style={[styles.listItemIcon, {backgroundColor: item.color}]}>
@@ -73,73 +91,100 @@ const Profile = () => {
       <Text style={styles.listItemText}>{item.text}</Text>
     </View>
   );
+
   const renderItemLainnya: ListRenderItem<ProfilePros> = ({item}) => (
     <View style={styles.listItemContainer}>
       <View style={[styles.listItemIcon, {backgroundColor: item.color}]}>
         <Ionicons name={item.icon} size={wp('7.8%')} color={'#FFFFFF'} />
       </View>
-      <Text style={styles.listItemText}>{item.text}</Text>
+      <Text
+        style={[
+          styles.listItemText,
+          item.text === 'Sign Out' && styles.boldText,
+        ]}>
+        {item.text}
+      </Text>
     </View>
   );
-
   return (
-    <ScrollView style={styles.scrollView}>
-      <View style={styles.headerContainer}>
-        <ImageBackground
-          style={styles.headerBackground}
-          source={require('../../assets/images/bg_profile2.jpg')}
-          resizeMode="cover">
-          <View style={styles.profileImageContainer}>
-            <ImageBackground
-              source={require('../../assets/images/hannan.jpg')}
-              resizeMode="cover"
-              style={styles.profileImage}
+    <BottomSheetModalProvider>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.headerContainer}>
+          <ImageBackground
+            style={styles.headerBackground}
+            source={require('../../assets/images/bg_profile2.jpg')}
+            resizeMode="cover">
+            <View style={styles.profileImageContainer}>
+              <ImageBackground
+                source={require('../../assets/images/hannan.jpg')}
+                resizeMode="cover"
+                style={styles.profileImage}
+              />
+            </View>
+            <Text style={styles.profileName}>Rais Hannan Rizanto</Text>
+            <View style={styles.profileInfoContainer}>
+              <Text style={styles.profileInfoText}>Santri</Text>
+              <Text style={styles.profileInfoHighlight}> | PPM BKI</Text>
+            </View>
+          </ImageBackground>
+        </View>
+        <View style={styles.mainContainer}>
+          <View style={styles.statsContainer}>
+            <View style={styles.statItem}>
+              <View style={styles.statValueContainer}>
+                <Text style={styles.statPlus}>+</Text>
+                <Text style={styles.statNumber}>70</Text>
+                <Text style={styles.statPercentage}>%</Text>
+              </View>
+              <Text style={styles.statLabel}>Ketercapaian</Text>
+            </View>
+            <TouchableOpacity
+              style={styles.statItem2}
+              onPress={handlePresentModalPress}>
+              <View style={styles.kafarohValueContainer}>
+                <Text style={styles.kafarohValue}>5</Text>
+              </View>
+              <Text style={styles.statLabel}>Kafaroh</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={styles.dataContainer}>
+          <Text style={styles.dataLabel}>Data Diri</Text>
+          <View style={styles.listContainer}>
+            <FlatList
+              data={datadiri}
+              renderItem={renderItemDataDiri}
+              keyExtractor={item => item.id}
             />
           </View>
-          <Text style={styles.profileName}>Rais Hannan Rizanto</Text>
-          <View style={styles.profileInfoContainer}>
-            <Text style={styles.profileInfoText}>Santri</Text>
-            <Text style={styles.profileInfoHighlight}> | PPM BKI</Text>
-          </View>
-        </ImageBackground>
-      </View>
-      <View style={styles.mainContainer}>
-        <View style={styles.statsContainer}>
-          <View style={styles.statItem}>
-            <View style={styles.statValueContainer}>
-              <Text style={styles.statPlus}>+</Text>
-              <Text style={styles.statNumber}>70</Text>
-              <Text style={styles.statPercentage}>%</Text>
-            </View>
-            <Text style={styles.statLabel}>Ketercapaian</Text>
-          </View>
-          <View style={styles.statItem2}>
-            <View style={styles.kafarohValueContainer}>
-              <Text style={styles.kafarohValue}>5</Text>
-            </View>
-            <Text style={styles.statLabel}>Kafaroh</Text>
+          <Text style={styles.dataLabel}>Lainnya</Text>
+          <View style={styles.listContainer}>
+            <FlatList
+              data={datalainnya}
+              renderItem={renderItemLainnya}
+              keyExtractor={item => item.id}
+            />
           </View>
         </View>
-      </View>
-      <View style={styles.dataContainer}>
-        <Text style={styles.dataLabel}>Data Diri</Text>
-        <View style={styles.listContainer}>
-          <FlatList
-            data={datadiri}
-            renderItem={renderItemDataDiri}
-            keyExtractor={item => item.id}
+      </ScrollView>
+
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        index={1}
+        snapPoints={['25%', '50%']}
+        backdropComponent={props => (
+          <BottomSheetBackdrop
+            {...props}
+            opacity={0.7}
+            appearsOnIndex={1}
+            disappearsOnIndex={-1}
           />
+        )}>
+        <View style={{}}>
+          <Text style={{color: '#eee'}}>This is the Kafaroh Bottom Sheet</Text>
         </View>
-        <Text style={styles.dataLabel}>Lainnya</Text>
-        <View style={styles.listContainer}>
-          <FlatList
-            data={datalainnya}
-            renderItem={renderItemLainnya}
-            keyExtractor={item => item.id}
-          />
-        </View>
-      </View>
-    </ScrollView>
+      </BottomSheetModal>
+    </BottomSheetModalProvider>
   );
 };
 
@@ -309,6 +354,11 @@ const styles = StyleSheet.create({
     paddingLeft: 17,
     color: '#000',
   },
+  boldText: {
+    fontWeight: 'bold',
+    color: '#FE0000',
+  },
+  bottomSheet: {},
 });
 
 export default Profile;
