@@ -20,6 +20,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import KafarohBottomSheet from '../../components/KafarohBottomSheet';
 
 const datadiri: ProfilePros[] = [
   // Data Diri
@@ -167,23 +168,10 @@ const Profile = () => {
           </View>
         </View>
       </ScrollView>
-
-      <BottomSheetModal
-        ref={bottomSheetModalRef}
-        index={1}
-        snapPoints={['25%', '50%']}
-        backdropComponent={props => (
-          <BottomSheetBackdrop
-            {...props}
-            opacity={0.7}
-            appearsOnIndex={1}
-            disappearsOnIndex={-1}
-          />
-        )}>
-        <View style={{}}>
-          <Text style={{color: '#eee'}}>This is the Kafaroh Bottom Sheet</Text>
-        </View>
-      </BottomSheetModal>
+      <KafarohBottomSheet
+        bottomSheetModalRef={bottomSheetModalRef}
+        handlePresentModalPress={handlePresentModalPress}
+      />
     </BottomSheetModalProvider>
   );
 };
