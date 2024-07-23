@@ -10,6 +10,7 @@ import presensi from './src/pages/presensi';
 import home from './src/pages/home';
 import profile from './src/pages/settings/profile';
 import index from './src/pages/';
+import kalender_akademik from './src/pages/settings/kalender_akademik';
 
 export type RootStackParamList = {
   Splash: undefined;
@@ -20,6 +21,7 @@ export type RootStackParamList = {
   Target: undefined;
   Perizinan: undefined;
   Profile: undefined;
+  Kalender_Akademik: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -48,6 +50,11 @@ export default function App() {
             options={{headerShown: false}}
             name="Index"
             component={index}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="Kalender_Akademik"
+            component={kalender_akademik}
           />
         </Stack.Navigator>
       </NavigationContainer>

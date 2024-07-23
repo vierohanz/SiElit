@@ -1,4 +1,5 @@
 import React, {useRef, useState, useEffect} from 'react';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {
   View,
   Text,
@@ -21,6 +22,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import KafarohBottomSheet from '../../components/KafarohBottomSheet';
+import {RootStackParamList} from '../../../App';
 
 const datadiri: ProfilePros[] = [
   // Data Diri
@@ -111,6 +113,7 @@ const initialData: Data = {
 };
 
 const Profile = () => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [data, setData] = useState<Data>(initialData);
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -129,7 +132,13 @@ const Profile = () => {
   );
 
   const renderItemLainnya: ListRenderItem<ProfilePros> = ({item}) => (
-    <View style={styles.listItemContainer}>
+    <TouchableOpacity
+      style={styles.listItemContainer}
+      onPress={() => {
+        if (item.text === 'Kalender Akademik') {
+          navigation.navigate('Kalender_Akademik');
+        }
+      }}>
       <View style={[styles.listItemIcon, {backgroundColor: item.color}]}>
         <Ionicons name={item.icon} size={wp('7.8%')} color={'#FFFFFF'} />
       </View>
@@ -140,8 +149,9 @@ const Profile = () => {
         ]}>
         {item.text}
       </Text>
-    </View>
+    </TouchableOpacity>
   );
+
   const [totalItems, setTotalItems] = useState(0);
 
   useEffect(() => {
