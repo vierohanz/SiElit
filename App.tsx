@@ -2,14 +2,14 @@ import React from 'react';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import login from './src/pages/login';
-import splash from './src/pages/splash';
-import perizinan from './src/pages/perizinan';
-import target from './src/pages/target';
-import presensi from './src/pages/presensi';
-import home from './src/pages/home';
-import profile from './src/pages/settings/profile';
-import index from './src/pages/';
+import Login from './src/pages/login';
+import Splash from './src/pages/splash';
+import Perizinan from './src/pages/perizinan';
+import Target from './src/pages/target';
+import Presensi from './src/pages/presensi';
+import Home from './src/pages/home';
+import Profile from './src/pages/settings/profile';
+import Index from './src/pages/';
 
 export type RootStackParamList = {
   Splash: undefined;
@@ -17,7 +17,7 @@ export type RootStackParamList = {
   Index: undefined;
   Home: undefined;
   Presensi: undefined;
-  Target: undefined;
+  // Target: undefined;
   Perizinan: undefined;
   Profile: undefined;
 };
@@ -32,22 +32,22 @@ export default function App() {
           <Stack.Screen
             options={{headerShown: false}}
             name="Splash"
-            component={splash}
+            component={Splash}
           />
           <Stack.Screen
             options={{headerShown: false}}
             name="Login"
-            component={login}
+            component={Login}
           />
-          <Stack.Screen
+          {/* <Stack.Screen
             options={{headerShown: false}}
             name="Target"
-            component={target}
-          />
+            component={Target}
+          /> */}
           <Stack.Screen
             options={{headerShown: false}}
             name="Index"
-            component={index}
+            component={Index}
           />
         </Stack.Navigator>
       </NavigationContainer>

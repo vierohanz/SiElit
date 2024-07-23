@@ -187,6 +187,7 @@ const Index = () => {
         component={ProfilePage}
       />
       <CurvedBottomBar.Screen
+        options={{headerShown: false}}
         name="target"
         position="CENTER"
         component={TargetPage}
