@@ -1,17 +1,22 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Animated} from 'react-native';
-import {BottomSheetModal, BottomSheetBackdrop} from '@gorhom/bottom-sheet';
+import BottomSheet, {
+  BottomSheetModal,
+  BottomSheetModalProvider,
+  BottomSheetBackdrop,
+} from '@gorhom/bottom-sheet';
 import {useWindowDimensions} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {ScrollView} from 'react-native-gesture-handler'; // Correct import for ScrollView
+import {ScrollView} from 'react-native-gesture-handler';
 
 interface KafarohBottomSheetProps {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
   handlePresentModalPress: () => void;
+  data: Data;
 }
 
 interface SectionItem {
@@ -26,6 +31,7 @@ interface Data {
 const KafarohBottomSheet: React.FC<KafarohBottomSheetProps> = ({
   bottomSheetModalRef,
   handlePresentModalPress,
+  data,
 }) => {
   const {width} = useWindowDimensions();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -45,7 +51,7 @@ const KafarohBottomSheet: React.FC<KafarohBottomSheetProps> = ({
         }
       });
     });
-  }, []);
+  }, [data]); // Ensure animations are initialized on data change
 
   const toggleDropdown = (title: string) => {
     const isOpen = openDropdown === title;
@@ -96,29 +102,6 @@ const KafarohBottomSheet: React.FC<KafarohBottomSheetProps> = ({
       inputRange: [0, 1],
       outputRange: [0, hp('7%')],
     });
-
-  const data: Data = {
-    BNC: [
-      {
-        title: 'Piket dapur astra',
-        items: ['Sunlight 3 ml - 3 buah', 'Spon - 4 buah'],
-      },
-      {
-        title: 'Piket jumber',
-        items: ['Sapu - 2 buah', 'Pel - 3 buah'],
-      },
-    ],
-    Pendidikan: [
-      {
-        title: 'Tidak izin mengaji',
-        items: ['3 kali - 5 point', '5 kali - 10 point'],
-      },
-      {
-        title: 'Datang pengajian terlambat',
-        items: ['2 kali - 3 point', '4 kali - 6 point'],
-      },
-    ],
-  };
 
   return (
     <View style={{flex: 1}}>
@@ -220,7 +203,6 @@ const KafarohBottomSheet: React.FC<KafarohBottomSheetProps> = ({
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
