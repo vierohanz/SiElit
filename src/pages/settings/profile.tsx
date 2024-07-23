@@ -1,4 +1,5 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {
   View,
   Text,
@@ -21,6 +22,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import KafarohBottomSheet from '../../components/KafarohBottomSheet';
+import {RootStackParamList} from '../../../App';
 
 const datadiri: ProfilePros[] = [
   // Data Diri
@@ -45,7 +47,7 @@ const datadiri: ProfilePros[] = [
 ];
 
 const datalainnya: ProfilePros[] = [
-  // Data Diri
+  // Data untuk Diri
   {
     id: '1',
     icon: 'create-outline',
@@ -77,7 +79,43 @@ type ProfilePros = {
   color: string;
   text: string;
 };
+
+// Data ini digunakan untuk Kafaroh
+type DataItem = {
+  title: string;
+  items: string[];
+};
+type Data = Record<string, DataItem[]>;
+const initialData: Data = {
+  BNC: [
+    {
+      title: 'Piket dapur astra',
+      items: ['Sunlight 3 ml - 3 buah', 'Spon - 4 buah'],
+    },
+    {title: 'Piket jumber', items: ['Sapu - 2 buah', 'Pel - 3 buah']},
+  ],
+  Pendidikan: [
+    {
+      title: 'Tidak izin mengaji',
+      items: ['3 kali - 5 point', '5 kali - 10 point'],
+    },
+    {
+      title: 'Datang pengajian terlambat',
+      items: ['2 kali - 3 point', '4 kali - 6 point'],
+    },
+  ],
+  DMC: [
+    {
+      title: 'Sholat Malam',
+      items: ['2 kali - 3 point', '4 kali - 6 point'],
+    },
+  ],
+};
+
 const Profile = () => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const [data, setData] = useState<Data>(initialData);
+
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
   const handlePresentModalPress = () => {
@@ -94,7 +132,13 @@ const Profile = () => {
   );
 
   const renderItemLainnya: ListRenderItem<ProfilePros> = ({item}) => (
-    <View style={styles.listItemContainer}>
+    <TouchableOpacity
+      style={styles.listItemContainer}
+      onPress={() => {
+        if (item.text === 'Kalender Akademik') {
+          navigation.navigate('Kalender_Akademik');
+        }
+      }}>
       <View style={[styles.listItemIcon, {backgroundColor: item.color}]}>
         <Ionicons name={item.icon} size={wp('7.8%')} color={'#FFFFFF'} />
       </View>
@@ -105,8 +149,22 @@ const Profile = () => {
         ]}>
         {item.text}
       </Text>
-    </View>
+    </TouchableOpacity>
   );
+
+  const [totalItems, setTotalItems] = useState(0);
+
+  useEffect(() => {
+    // Hitung jumlah total item dari semua kategori dalam data
+    const total = Object.keys(data).reduce((acc, key) => {
+      return (
+        acc + data[key].reduce((subAcc, item) => subAcc + item.items.length, 0)
+      );
+    }, 0);
+
+    // Set total item
+    setTotalItems(total);
+  }, [data]);
   return (
     <BottomSheetModalProvider>
       <ScrollView style={styles.scrollView}>
@@ -143,7 +201,7 @@ const Profile = () => {
               style={styles.statItem2}
               onPress={handlePresentModalPress}>
               <View style={styles.kafarohValueContainer}>
-                <Text style={styles.kafarohValue}>5</Text>
+                <Text style={styles.kafarohValue}>{totalItems}</Text>
               </View>
               <Text style={styles.statLabel}>Kafaroh</Text>
             </TouchableOpacity>
@@ -171,6 +229,7 @@ const Profile = () => {
       <KafarohBottomSheet
         bottomSheetModalRef={bottomSheetModalRef}
         handlePresentModalPress={handlePresentModalPress}
+        data={data}
       />
     </BottomSheetModalProvider>
   );
