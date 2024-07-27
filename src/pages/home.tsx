@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,11 @@ import {
   StyleSheet,
   ScrollView,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {RootStackParamList} from '../../App';
+import {AuthContext} from '../auth/AuthContext';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -37,6 +42,29 @@ const jadwalData = [
 ];
 
 const Home = () => {
+  const [username, setUsername] = useState<string | null>(null);
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const {logout} = useContext(AuthContext);
+  useEffect(() => {
+    const loadUsername = async () => {
+      try {
+        const storedUsername = await AsyncStorage.getItem('username');
+        setUsername(storedUsername);
+      } catch (error) {
+        console.error('Failed to load username from AsyncStorage:', error);
+      }
+    };
+
+    loadUsername();
+  }, []);
+
+  const truncateText = (text: string | null, maxLength: number) => {
+    if (text && text.length > maxLength) {
+      return text.substring(0, maxLength) + '...';
+    }
+    return text || '';
+  };
+
   return (
     <ScrollView style={styles.container}>
       <StatusBar
@@ -52,7 +80,9 @@ const Home = () => {
           imageStyle={styles.landingImageStyle}>
           <View style={styles.contentContainer}>
             <View style={styles.textContainer}>
-              <Text style={styles.welcomeText}>Halo, Raishannan</Text>
+              <Text style={styles.welcomeText}>
+                Halo, {truncateText(username, 25) || 'Guest'}
+              </Text>
               <Text style={styles.subText}>
                 Apakah anda siap menjadi mubaligh sarjana
               </Text>
@@ -128,7 +158,7 @@ const styles = StyleSheet.create({
     width: width * 0.6,
   },
   welcomeText: {
-    fontSize: wp('7%'),
+    fontSize: wp('6%'),
     fontWeight: 'bold',
     color: '#fff',
   },

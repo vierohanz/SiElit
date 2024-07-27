@@ -8,12 +8,22 @@ import Splash from './src/pages/splash';
 import Index from './src/pages/index';
 import KalenderAkademik from './src/pages/settings/kalender_akademik';
 import {AuthContext, AuthProvider} from './src/auth/AuthContext';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import login from './src/pages/login';
+import splash from './src/pages/splash';
+import perizinan from './src/pages/perizinan';
+import target from './src/pages/target';
+import presensi from './src/pages/presensi';
+import index from './src/pages/';
+import kalender_akademik from './src/pages/settings/kalender_akademik';
+import ipk from './src/pages/settings/ipk';
 
 export type RootStackParamList = {
   Splash: undefined;
   Login: undefined;
   Index: undefined;
   Kalender_Akademik: undefined;
+  IPK: undefined;
 };
 
 const Stack = createStackNavigator();
@@ -42,22 +52,32 @@ const AppNavigator = () => {
         <Stack.Screen
           options={{headerShown: false}}
           name="Splash"
-          component={Splash}
+          component={splash}
         />
         <Stack.Screen
           options={{headerShown: false}}
           name="Login"
-          component={Login}
+          component={login}
+        />
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="Target"
+          component={target}
         />
         <Stack.Screen
           options={{headerShown: false}}
           name="Index"
-          component={Index}
+          component={index}
         />
         <Stack.Screen
           options={{headerShown: false}}
           name="Kalender_Akademik"
-          component={KalenderAkademik}
+          component={kalender_akademik}
+        />
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="IPK"
+          component={ipk}
         />
       </Stack.Navigator>
     </NavigationContainer>

@@ -1,6 +1,11 @@
-import React, {useRef, useState, useEffect} from 'react';
-import {NavigationProp, useNavigation} from '@react-navigation/native';
+import React, {useContext, useRef, useState, useEffect} from 'react';
+import {NavigationProp} from '@react-navigation/native';
 import * as Keychain from 'react-native-keychain';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {RootStackParamList} from '../../../App';
+import {AuthContext} from '../../auth/AuthContext';
 import {
   View,
   Text,
@@ -23,7 +28,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import KafarohBottomSheet from '../../components/KafarohBottomSheet';
-import {RootStackParamList} from '../../../App';
+import EditProfileBottomSheet from '../../components/EditProfileBottomSheet';
 
 const datadiri: ProfilePros[] = [
   // Data Diri
@@ -114,10 +119,24 @@ const initialData: Data = {
 };
 
 const Profile = () => {
+  const [username, setUsername] = useState<string | null>(null);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [data, setData] = useState<Data>(initialData);
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const bottomSheetModalRef_editProfile = useRef<BottomSheetModal>(null);
+  useEffect(() => {
+    const loadUsername = async () => {
+      try {
+        const storedUsername = await AsyncStorage.getItem('username');
+        setUsername(storedUsername);
+      } catch (error) {
+        console.error('Failed to load username from AsyncStorage:', error);
+      }
+    };
+
+    loadUsername();
+  }, []);
 
   const handlePresentModalPress = () => {
     bottomSheetModalRef.current?.present();
@@ -129,10 +148,17 @@ const Profile = () => {
       await Keychain.resetGenericPassword();
 
       // Navigasi ke layar login
-      navigation.navigate('Login');
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'Login'}],
+      });
     } catch (error) {
       console.error('Error during sign out:', error);
     }
+  };
+
+  const handlePresentModalPress_editProfile = () => {
+    bottomSheetModalRef_editProfile.current?.present();
   };
 
   const renderItemDataDiri: ListRenderItem<ProfilePros> = ({item}) => (
@@ -152,6 +178,10 @@ const Profile = () => {
           navigation.navigate('Kalender_Akademik');
         } else if (item.text === 'Sign Out') {
           handleSignOut();
+        } else if (item.text === 'IPK') {
+          navigation.navigate('IPK');
+        } else if (item.text === 'Edit Data') {
+          bottomSheetModalRef_editProfile.current?.present();
         }
       }}>
       <View style={[styles.listItemIcon, {backgroundColor: item.color}]}>
@@ -195,7 +225,7 @@ const Profile = () => {
                 style={styles.profileImage}
               />
             </View>
-            <Text style={styles.profileName}>Rais Hannan Rizanto</Text>
+            <Text style={styles.profileName}>{username || 'Guest'}</Text>
             <View style={styles.profileInfoContainer}>
               <Text style={styles.profileInfoText}>Santri</Text>
               <Text style={styles.profileInfoHighlight}> | PPM BKI</Text>
@@ -244,6 +274,11 @@ const Profile = () => {
       <KafarohBottomSheet
         bottomSheetModalRef={bottomSheetModalRef}
         handlePresentModalPress={handlePresentModalPress}
+        data={data}
+      />
+      <EditProfileBottomSheet
+        bottomSheetModalRef={bottomSheetModalRef_editProfile}
+        handlePresentModalPress={handlePresentModalPress_editProfile}
         data={data}
       />
     </BottomSheetModalProvider>
@@ -376,10 +411,11 @@ const styles = StyleSheet.create({
     color: '#13A89D',
   },
   dataContainer: {
-    height: hp('78%'), // Hati-hati dengan Ini
+    height: hp('70%'), // Hati-hati dengan Ini
     width: wp('100%'),
     backgroundColor: '#fff',
     paddingHorizontal: 10,
+    marginBottom: hp('10%'),
   },
   dataLabel: {
     fontFamily: 'Poppins-SemiBold',

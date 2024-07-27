@@ -7,7 +7,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Alert,
 } from 'react-native';
 import ButtonLogin from '../components/ButtonLogin';
 import TextInputLogin from '../components/TextInputLogin';
@@ -23,6 +22,7 @@ import * as Keychain from 'react-native-keychain';
 import {AuthContext} from '../auth/AuthContext';
 import appSettings from '../../Appsettings';
 import Snackbar from 'react-native-snackbar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const {height} = Dimensions.get('window');
 
@@ -71,6 +71,9 @@ const Login = () => {
           console.log('Access Token:', res.data.accessToken);
           if (res.data.accessToken) {
             await login(res.data.accessToken);
+            await AsyncStorage.setItem('accessToken', res.data.accessToken); // Ensure the key is 'accessToken'
+            await AsyncStorage.setItem('username', loginData.name);
+
             navigation.navigate('Index');
           } else {
             Snackbar.show({
@@ -83,13 +86,12 @@ const Login = () => {
         })
         .catch(async (err: any) => {
           if (err.response && err.response.status === 401) {
-            // Hapus token dari react-native-keychain
             await Keychain.resetGenericPassword();
           } else {
             Snackbar.show({
               text: err.message,
-              duration: 3000, // 3 seconds
-              backgroundColor: 'white', // Optional, set custom color
+              duration: 3000,
+              backgroundColor: 'white',
             });
           }
         });

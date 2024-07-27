@@ -1,59 +1,121 @@
-import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import React, {useEffect, useState} from 'react';
+import {View, Text, StyleSheet, ActivityIndicator} from 'react-native';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {formatDate} from './DateUtils';
+
+type PresensiItem = {
+  user_id: number;
+  class_id: number;
+  nis: string;
+  name: string;
+  grade: string;
+  gender: number;
+  class_name: string;
+  class_type: string;
+  start_date: string;
+  end_date: string;
+  attend_at: string | null;
+  status: string | null;
+  lastEditBy: string;
+};
 
 type CardPresensiProps = {
-  item: {
-    day: string;
-    time: string;
-    title: string;
-    timeRange: string;
-    status: string;
-    updateTime: string;
-    date: string;
-  };
+  item: PresensiItem;
 };
 
 const CardPresensi: React.FC<CardPresensiProps> = ({item}) => {
-  let statusColor = '#000';
-  if (item.status === 'Hadir') {
-    statusColor = '#2DCF2A';
-  } else if (item.status === 'Tidak Hadir') {
-    statusColor = '#FF0000';
-  } else if (item.status === 'Izin') {
-    statusColor = '#0047FF';
-  } else if (item.status === 'Terlambat') {
-    statusColor = '#C7D021';
+  const [loading, setLoading] = useState(true);
+  const [date, time] = item.start_date.split('T');
+  const [date2, time2] = item.end_date.split('T');
+  const [date3, time3] = item.attend_at ? item.attend_at.split('T') : ['', ''];
+
+  // Format tanggal untuk mendapatkan nama hari dengan maksimal 3 karakter
+  const dateObject = new Date(date);
+  const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+  const dayName = dayNames[dateObject.getDay()]; // Mengambil nama hari dari objek Date
+
+  // Format tanggal dalam format 'DD MMMM YYYY'
+  const formattedDate = formatDate(date);
+
+  // Format waktu untuk menampilkan jam dan menit
+  const formattedTimeEnd = time2
+    ? time2.split(':')[0] + ':' + time2.split(':')[1]
+    : '';
+
+  const formattedTimeStart = time
+    ? time.split(':')[0] + ':' + time.split(':')[1]
+    : '';
+
+  const formattedTimeAttend = time3
+    ? time3.split(':')[0] + ':' + time3.split(':')[1]
+    : '';
+
+  const truncatedClassName =
+    item.class_name.length > 18
+      ? item.class_name.substring(0, 18) + '..'
+      : item.class_name;
+
+  useEffect(() => {
+    setLoading(false);
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#13A89D" />
+      </View>
+    );
+  }
+
+  let statusColor = '#FF0000'; // Default color red for "Tidak Hadir"
+  const statusText = item.status ? item.status : 'tidak hadir'; // Default status to "Tidak Hadir" if null
+
+  switch (statusText) {
+    case 'hadir':
+      statusColor = '#2DCF2A'; // Green
+      break;
+    case 'zin':
+      statusColor = '#0047FF'; // Yellow
+      break;
+    case 'terlambat':
+      statusColor = '#FFD700'; // Red
+      break;
+    default:
+      statusColor = '#FF0000'; // Red for unknown status
   }
 
   return (
     <View style={styles.cardContainer}>
       <View style={styles.innerContainer}>
         <View style={styles.timeContainer}>
-          <Text style={styles.dayText}>{item.day}</Text>
-          <Text style={styles.timeText}>{item.time}</Text>
+          <Text style={styles.dayText}>{dayName} </Text>
+          <Text style={styles.timeText}>{formattedTimeStart} </Text>
         </View>
         <View style={styles.separator}></View>
         <View style={styles.detailsContainer}>
           <View style={styles.titleContainer}>
             <Ionicons name={'library'} size={wp('6%')} color={'#B8B8B8'} />
-            <Text style={styles.titleText}>{item.title}</Text>
+            <Text style={styles.titleText}>{truncatedClassName}</Text>
           </View>
-          <Text style={styles.timeRangeText}>{item.timeRange}</Text>
+          <Text style={styles.timeRangeText}>
+            {formattedTimeStart} - {formattedTimeEnd}
+          </Text>
           <View style={styles.statusContainer}>
             <Text style={[styles.statusText, {color: statusColor}]}>
-              {item.status}
+              {statusText}
             </Text>
-            <Text style={styles.timeComing}>({item.updateTime})</Text>
+            <Text style={styles.timeComing}>({formattedTimeAttend})</Text>
           </View>
         </View>
       </View>
       <View>
-        <Text style={styles.dateText}>{item.date}</Text>
+        <Text style={styles.dateText}>{formattedDate}</Text>
       </View>
     </View>
   );
@@ -63,7 +125,7 @@ const styles = StyleSheet.create({
   cardContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 10,
+    marginBottom: 15,
     height: hp('12%'),
     backgroundColor: '#fff',
     borderRadius: 16,
@@ -73,7 +135,6 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.8,
     shadowRadius: 4,
-
     elevation: 5,
   },
   innerContainer: {
@@ -139,7 +200,12 @@ const styles = StyleSheet.create({
     fontSize: wp('3.2%'),
     color: '#B8B8B8',
     marginTop: wp('1%'),
-    marginRight: wp('2%'),
+    marginRight: wp('4%'),
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

@@ -1,125 +1,160 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, FlatList, ScrollView} from 'react-native';
-import CardPresensi from '../components/CardPresensi';
+import React, {useEffect, useState} from 'react';
 import Searching from '../components/Searching';
-import HorizontalList from '../components/HorizontalList';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  ScrollView,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import CardPresensi from '../components/CardPresensi'; // Pastikan path ini benar
 
-const data1 = [
+const filterOptions = [
   {id: '1', title: 'Semua'},
   {id: '2', title: 'Hari Ini'},
 ];
 
 type PresensiItem = {
-  id: string;
-  day: string;
-  time: string;
-  title: string;
-  timeRange: string;
-  status: string;
-  updateTime: string;
-  date: string;
+  user_id: number;
+  class_id: number;
+  nis: string;
+  name: string;
+  grade: string;
+  gender: number;
+  class_name: string;
+  class_type: string;
+  start_date: string;
+  end_date: string;
+  attend_at: string | null;
+  status: string | null;
+  lastEditBy: string;
 };
 
-const data = [
-  {
-    id: '1',
-    day: 'Sen',
-    time: '18:30',
-    title: 'Mengaji Lambatan',
-    timeRange: '19:30 - 21:30',
-    status: 'Hadir',
-    updateTime: '19:20',
-    date: '2024-07-21', // Format ISO 8601 date
-  },
-  {
-    id: '2',
-    day: 'Sel',
-    time: '09:00',
-    title: 'Diskusi Kelompok',
-    timeRange: '09:00 - 11:00',
-    status: 'Izin',
-    updateTime: '09:10',
-    date: '2024-07-16', // Format ISO 8601 date
-  },
-  {
-    id: '3',
-    day: 'Kam',
-    time: '10:00',
-    title: 'Pengajian IT',
-    timeRange: '09:00 - 12:00',
-    status: 'Tidak Hadir',
-    updateTime: '09:10',
-    date: '2024-07-18', // Format ISO 8601 date
-  },
-  {
-    id: '3',
-    day: 'Kam',
-    time: '12:00',
-    title: 'Pengajian IT',
-    timeRange: '10:00 - 12:00',
-    status: 'Terlambat',
-    updateTime: '10:10',
-    date: '2024-07-18', // Format ISO 8601 date
-  },
-];
+const Presensi: React.FC = () => {
+  const [attendanceData, setAttendanceData] = useState<PresensiItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedFilter, setSelectedFilter] = useState<string>('1'); // Default selected filter 'Semua'
+  const [searchText, setSearchText] = useState<string>('');
 
-const Presensi = () => {
-  const [selectedFilter, setSelectedFilter] = useState<string | null>('1'); // Default selected filter 'Semua'
-  const [searchText, setSearchText] = useState<string>(''); // State untuk nilai pencarian
-
+  // Function to handle filter selection
   const handleFilterSelect = (filterId: string) => {
     setSelectedFilter(filterId);
   };
 
+  // Function to handle search input
   const handleSearch = (text: string) => {
     setSearchText(text);
   };
 
-  const renderItem = ({item}: {item: PresensiItem}) => (
-    <CardPresensi key={item.id} item={item} />
-  );
+  // Filter data based on searchText and selectedFilter
+  let filteredData = attendanceData;
 
-  let filteredData = data;
-
-  // Filter berdasarkan selectedFilter
-  if (selectedFilter === '2') {
-    const todayDate = new Date().toISOString().split('T')[0];
-    filteredData = data.filter(item => item.date === todayDate);
+  if (searchText) {
+    filteredData = filteredData.filter(
+      item =>
+        item.class_name.toLowerCase().includes(searchText.toLowerCase()) ||
+        (item.start_date && item.start_date.startsWith(searchText)) ||
+        (item.status &&
+          item.status.toLowerCase().includes(searchText.toLowerCase())),
+    );
   }
 
-  // Filter berdasarkan searchText
-  filteredData = filteredData.filter(
-    item =>
-      item.title.toLowerCase().includes(searchText.toLowerCase()) ||
-      item.day.toLowerCase().includes(searchText.toLowerCase()) ||
-      item.status.toLowerCase().includes(searchText.toLowerCase()),
-  );
+  if (selectedFilter === '2') {
+    // Filter for 'Hari Ini' (e.g., based on date)
+    const today = new Date().toISOString().split('T')[0];
+    filteredData = filteredData.filter(
+      item =>
+        item.start_date.startsWith(today) || item.end_date.startsWith(today),
+    );
+  }
 
-  const renderCard = (item: {id: string; title: string}) => (
-    <FlatList
-      data={filteredData}
-      renderItem={renderItem}
-      keyExtractor={item => item.id}
-      contentContainerStyle={styles.contentContainer}
-    />
-  );
+  // Sort the data by start_date
+  filteredData = filteredData.sort((a, b) => {
+    const dateA = new Date(a.start_date);
+    const dateB = new Date(b.start_date);
+    return dateB.getTime() - dateA.getTime(); // Descending order
+  });
+
+  useEffect(() => {
+    const fetchAttendanceData = async () => {
+      const token = await AsyncStorage.getItem('accessToken');
+      console.log('Fetched Token:', token); // Log token for debugging
+
+      if (!token) {
+        console.log('No token found');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await axios.get(
+          'https://api-si-elit.nisatecno.com/attendances/',
+          {
+            headers: {Authorization: `Bearer ${token}`},
+          },
+        );
+        console.log('Fetched Data:', response.data); // Log fetched data
+        setAttendanceData(response.data);
+      } catch (error) {
+        console.error('Error fetching attendance data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAttendanceData();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#13A89D" />
+      </View>
+    );
+  }
 
   return (
-    <ScrollView style={{backgroundColor: '#fff'}}>
-      <View style={{flex: 1, paddingBottom: hp('15%')}}>
+    <ScrollView style={styles.scrollView}>
+      <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerText}>Presensi</Text>
           <Searching onSearch={handleSearch} />
         </View>
-        <HorizontalList
-          data={data1}
-          onSelect={handleFilterSelect}
-          selectedId={selectedFilter}
-          renderCard={renderCard}
+
+        <View style={styles.filterContainer}>
+          {filterOptions.map(filter => (
+            <TouchableOpacity
+              key={filter.id}
+              style={[
+                styles.filterButton,
+                selectedFilter === filter.id && styles.selectedFilterButton,
+              ]}
+              onPress={() => handleFilterSelect(filter.id)}>
+              <Text
+                style={[
+                  styles.filterButtonText,
+                  selectedFilter === filter.id &&
+                    styles.selectedFilterButtonText,
+                ]}>
+                {filter.title}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <FlatList
+          data={filteredData}
+          renderItem={({item}) => <CardPresensi item={item} />}
+          keyExtractor={item => item.user_id.toString()} // Use unique identifier from the data
+          contentContainerStyle={styles.contentContainer}
         />
       </View>
     </ScrollView>
@@ -127,6 +162,13 @@ const Presensi = () => {
 };
 
 const styles = StyleSheet.create({
+  scrollView: {
+    backgroundColor: '#fff',
+  },
+  container: {
+    flex: 1,
+    paddingBottom: hp('15%'),
+  },
   header: {
     backgroundColor: '#13A89D',
     height: hp('20%'),
@@ -134,15 +176,48 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: wp('2%'),
   },
   headerText: {
     fontSize: wp('6%'),
     fontWeight: '700',
     color: '#fff',
   },
+  filterContainer: {
+    marginTop: hp('4%'),
+    flexDirection: 'row',
+    paddingVertical: hp('1%'),
+  },
+  filterButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: hp('5%'),
+    width: wp('25%'),
+    borderColor: '#13A89D',
+    borderWidth: 2,
+    margin: 5,
+    backgroundColor: '#fff',
+    borderRadius: 15,
+  },
+  filterButtonText: {
+    color: '#000',
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: wp('3.8%'),
+  },
+  selectedFilterButton: {
+    backgroundColor: '#13A89D',
+  },
+  selectedFilterButtonText: {
+    color: '#fff',
+  },
   contentContainer: {
-    marginTop: 10,
+    marginTop: hp('2%'),
     paddingHorizontal: wp('1.5%'),
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
