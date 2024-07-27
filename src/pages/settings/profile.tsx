@@ -125,6 +125,7 @@ const Profile = () => {
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const bottomSheetModalRef_editProfile = useRef<BottomSheetModal>(null);
+
   useEffect(() => {
     const loadUsername = async () => {
       try {
