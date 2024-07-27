@@ -19,6 +19,7 @@
     "react": "18.2.0",
     "react-native": "0.74.3",
     "react-native-asset": "^2.1.1",
+    "react-native-calendars": "^1.1306.0",
     "react-native-curved-bottom-bar": "^3.2.7",
     "react-native-document-picker": "^9.3.0",
     "react-native-feather": "^1.1.2",

@@ -137,6 +137,8 @@ const Profile = () => {
       onPress={() => {
         if (item.text === 'Kalender Akademik') {
           navigation.navigate('Kalender_Akademik');
+        } else if (item.text === 'IPK') {
+          navigation.navigate('IPK');
         }
       }}>
       <View style={[styles.listItemIcon, {backgroundColor: item.color}]}>
@@ -361,10 +363,10 @@ const styles = StyleSheet.create({
     color: '#13A89D',
   },
   dataContainer: {
-    height: hp('75%'), // Hati-hati dengan Ini
     width: wp('100%'),
     backgroundColor: '#fff',
     paddingHorizontal: 10,
+    marginBottom: hp('10%'),
   },
   dataLabel: {
     fontFamily: 'Poppins-SemiBold',

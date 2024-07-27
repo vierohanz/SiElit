@@ -11,6 +11,7 @@ import home from './src/pages/home';
 import profile from './src/pages/settings/profile';
 import index from './src/pages/';
 import kalender_akademik from './src/pages/settings/kalender_akademik';
+import ipk from './src/pages/settings/ipk';
 
 export type RootStackParamList = {
   Splash: undefined;
@@ -18,10 +19,11 @@ export type RootStackParamList = {
   Index: undefined;
   Home: undefined;
   Presensi: undefined;
-  // Target: undefined;
+  Target: undefined;
   Perizinan: undefined;
   Profile: undefined;
   Kalender_Akademik: undefined;
+  IPK: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -34,27 +36,32 @@ export default function App() {
           <Stack.Screen
             options={{headerShown: false}}
             name="Splash"
-            component={Splash}
+            component={splash}
           />
           <Stack.Screen
             options={{headerShown: false}}
             name="Login"
-            component={Login}
+            component={login}
           />
-          {/* <Stack.Screen
+          <Stack.Screen
             options={{headerShown: false}}
             name="Target"
-            component={Target}
-          /> */}
+            component={target}
+          />
           <Stack.Screen
             options={{headerShown: false}}
             name="Index"
-            component={Index}
+            component={index}
           />
           <Stack.Screen
             options={{headerShown: false}}
             name="Kalender_Akademik"
             component={kalender_akademik}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="IPK"
+            component={ipk}
           />
         </Stack.Navigator>
       </NavigationContainer>
