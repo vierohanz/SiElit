@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {
   View,
   Text,
@@ -7,8 +7,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Alert,
 } from 'react-native';
-import tw from 'twrnc';
 import ButtonLogin from '../components/ButtonLogin';
 import TextInputLogin from '../components/TextInputLogin';
 import CheckboxRememberMe from '../components/RememberMe';
@@ -18,18 +18,86 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import axios from 'axios';
+import * as Keychain from 'react-native-keychain';
+import {AuthContext} from '../auth/AuthContext';
+import appSettings from '../../Appsettings';
+import Snackbar from 'react-native-snackbar';
 
 const {height} = Dimensions.get('window');
 
 const Login = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const {login} = useContext(AuthContext);
 
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [loginData, setLoginData] = useState({
+    name: '',
+    nameErr: '',
+    password: '',
+    passwordErr: '',
+  });
   const [rememberMe, setRememberMe] = useState(false);
 
-  const handleLogin = () => {
-    navigation.navigate('Index');
+  const handleLogin = async () => {
+    if (!loginData.name || !loginData.password) {
+      if (!loginData.name)
+        setLoginData(prev => ({...prev, nameErr: 'tidak boleh kosong'}));
+      Snackbar.show({
+        text: 'Username tidak boleh kosong.',
+        duration: 3000,
+        backgroundColor: '#1E1E1E',
+        textColor: 'white',
+      });
+      if (!loginData.password)
+        setLoginData(prev => ({...prev, passwordErr: 'tidak boleh kosong'}));
+      Snackbar.show({
+        text: 'Password tidak boleh kosong.',
+        duration: 3000,
+        backgroundColor: '#1E1E1E',
+        textColor: 'white',
+      });
+    } else {
+      console.log('Login data:', {
+        name: loginData.name,
+        password: loginData.password,
+      });
+
+      axios
+        .post(`${appSettings.api}/auth/login`, {
+          name: loginData.name,
+          password: loginData.password,
+        })
+        .then(async (res: any) => {
+          console.log('Access Token:', res.data.accessToken);
+          if (res.data.accessToken) {
+            await login(res.data.accessToken);
+            navigation.navigate('Index');
+          } else {
+            Snackbar.show({
+              text: res.data.msg,
+              duration: 3000,
+              backgroundColor: '#1E1E1E',
+              textColor: 'white',
+            });
+          }
+        })
+        .catch(async (err: any) => {
+          if (err.response && err.response.status === 401) {
+            // Hapus token dari react-native-keychain
+            await Keychain.resetGenericPassword();
+          } else {
+            Snackbar.show({
+              text: err.message,
+              duration: 3000, // 3 seconds
+              backgroundColor: 'white', // Optional, set custom color
+            });
+          }
+        });
+    }
+  };
+
+  const handleChange = (value: string, name: string) => {
+    setLoginData(prev => ({...prev, [name]: value, [`${name}Err`]: ''}));
   };
 
   const toggleRememberMe = () => {
@@ -37,12 +105,8 @@ const Login = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={tw`flex-1 bg-[#13A89D]`}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <ScrollView
-        contentContainerStyle={tw`bg-[#13A89D] h-full`}
-        keyboardShouldPersistTaps="handled">
+    <KeyboardAvoidingView keyboardVerticalOffset={Platform.OS ? 10 : 0}>
+      <ScrollView keyboardShouldPersistTaps="handled">
         <View style={styles.container}>
           <View style={styles.welcomeContainer}>
             <Text style={styles.welcomeText}>Selamat Datang,</Text>
@@ -53,14 +117,14 @@ const Login = () => {
           <View style={styles.signInContainer}>
             <Text style={styles.signInText}>Sign In</Text>
             <TextInputLogin
-              placeholder="NIS"
-              value={username}
-              onChangeText={setUsername}
+              placeholder="Username"
+              value={loginData.name}
+              onChangeText={value => handleChange(value, 'name')}
             />
             <TextInputLogin
               placeholder="Password"
-              value={password}
-              onChangeText={setPassword}
+              value={loginData.password}
+              onChangeText={value => handleChange(value, 'password')}
               secureTextEntry
             />
             <View style={styles.rememberMeContainer}>
@@ -84,7 +148,7 @@ const styles = StyleSheet.create({
   },
   welcomeContainer: {
     paddingLeft: '5%',
-    paddingTop: '30%',
+    paddingTop: '20%',
     height: height * 0.3,
   },
   welcomeText: {

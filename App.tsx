@@ -1,63 +1,75 @@
-import React from 'react';
+import React, {useEffect, useState, useContext} from 'react';
+import {ActivityIndicator} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import login from './src/pages/login';
-import splash from './src/pages/splash';
-import perizinan from './src/pages/perizinan';
-import target from './src/pages/target';
-import presensi from './src/pages/presensi';
-import home from './src/pages/home';
-import profile from './src/pages/settings/profile';
-import index from './src/pages/';
-import kalender_akademik from './src/pages/settings/kalender_akademik';
+import {createStackNavigator} from '@react-navigation/stack';
+import Login from './src/pages/login';
+import Splash from './src/pages/splash';
+import Index from './src/pages/index';
+import KalenderAkademik from './src/pages/settings/kalender_akademik';
+import {AuthContext, AuthProvider} from './src/auth/AuthContext';
 
 export type RootStackParamList = {
   Splash: undefined;
   Login: undefined;
   Index: undefined;
-  Home: undefined;
-  Presensi: undefined;
-  Target: undefined;
-  Perizinan: undefined;
-  Profile: undefined;
   Kalender_Akademik: undefined;
 };
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createStackNavigator();
 
-export default function App() {
+const AppNavigator = () => {
+  const {isAuthenticated, isLoading} = useContext(AuthContext);
+
+  if (isLoading) {
+    return (
+      <ActivityIndicator
+        size="large"
+        color="#13A89D"
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: [{translateX: -25}, {translateY: -25}],
+        }}
+      />
+    );
+  }
+
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Splash">
-          <Stack.Screen
-            options={{headerShown: false}}
-            name="Splash"
-            component={splash}
-          />
-          <Stack.Screen
-            options={{headerShown: false}}
-            name="Login"
-            component={login}
-          />
-          <Stack.Screen
-            options={{headerShown: false}}
-            name="Target"
-            component={target}
-          />
-          <Stack.Screen
-            options={{headerShown: false}}
-            name="Index"
-            component={index}
-          />
-          <Stack.Screen
-            options={{headerShown: false}}
-            name="Kalender_Akademik"
-            component={kalender_akademik}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </GestureHandlerRootView>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName={isAuthenticated ? 'Index' : 'Splash'}>
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="Splash"
+          component={Splash}
+        />
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="Login"
+          component={Login}
+        />
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="Index"
+          component={Index}
+        />
+        <Stack.Screen
+          options={{headerShown: false}}
+          name="Kalender_Akademik"
+          component={KalenderAkademik}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
+};
+
+const App = () => {
+  return (
+    <AuthProvider>
+      <AppNavigator />
+    </AuthProvider>
+  );
+};
+
+export default App;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {TextInput, StyleSheet, TextInputProps} from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -18,14 +18,18 @@ const TextInputLogin: React.FC<TextInputLoginProps> = ({
   onChangeText,
   secureTextEntry,
 }) => {
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
     <TextInput
-      style={styles.input}
+      style={[styles.input, {borderColor: isFocused ? '#13A89D' : '#ccc'}]}
       placeholder={placeholder}
       placeholderTextColor="#999"
       value={value}
       onChangeText={onChangeText}
       secureTextEntry={secureTextEntry}
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
     />
   );
 };

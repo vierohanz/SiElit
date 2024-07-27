@@ -1,5 +1,6 @@
 import React, {useRef, useState, useEffect} from 'react';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
+import * as Keychain from 'react-native-keychain';
 import {
   View,
   Text,
@@ -122,6 +123,18 @@ const Profile = () => {
     bottomSheetModalRef.current?.present();
   };
 
+  const handleSignOut = async () => {
+    try {
+      // Hapus token dari Keychain
+      await Keychain.resetGenericPassword();
+
+      // Navigasi ke layar login
+      navigation.navigate('Login');
+    } catch (error) {
+      console.error('Error during sign out:', error);
+    }
+  };
+
   const renderItemDataDiri: ListRenderItem<ProfilePros> = ({item}) => (
     <View style={styles.listItemContainer}>
       <View style={[styles.listItemIcon, {backgroundColor: item.color}]}>
@@ -137,6 +150,8 @@ const Profile = () => {
       onPress={() => {
         if (item.text === 'Kalender Akademik') {
           navigation.navigate('Kalender_Akademik');
+        } else if (item.text === 'Sign Out') {
+          handleSignOut();
         }
       }}>
       <View style={[styles.listItemIcon, {backgroundColor: item.color}]}>
@@ -361,7 +376,7 @@ const styles = StyleSheet.create({
     color: '#13A89D',
   },
   dataContainer: {
-    height: hp('75%'), // Hati-hati dengan Ini
+    height: hp('78%'), // Hati-hati dengan Ini
     width: wp('100%'),
     backgroundColor: '#fff',
     paddingHorizontal: 10,

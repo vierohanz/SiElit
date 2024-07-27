@@ -5,6 +5,7 @@ import {
   Dimensions,
   Image,
   ImageBackground,
+  StatusBar,
   StyleSheet,
   ScrollView,
 } from 'react-native';
@@ -38,6 +39,11 @@ const jadwalData = [
 const Home = () => {
   return (
     <ScrollView style={styles.container}>
+      <StatusBar
+        translucent
+        backgroundColor="rgba(0,0,0,0.2)" // Adjust color and opacity
+        barStyle="light-content" // Change to 'dark-content' for light backgrounds
+      />
       {/* Landing Page */}
       <View style={styles.landingContainer}>
         <ImageBackground
