@@ -22,6 +22,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import KafarohBottomSheet from '../../components/KafarohBottomSheet';
+import EditProfileBottomSheet from '../../components/EditProfileBottomSheet';
 import {RootStackParamList} from '../../../App';
 
 const datadiri: ProfilePros[] = [
@@ -117,9 +118,14 @@ const Profile = () => {
   const [data, setData] = useState<Data>(initialData);
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const bottomSheetModalRef_editProfile = useRef<BottomSheetModal>(null);
 
   const handlePresentModalPress = () => {
     bottomSheetModalRef.current?.present();
+  };
+
+  const handlePresentModalPress_editProfile = () => {
+    bottomSheetModalRef_editProfile.current?.present();
   };
 
   const renderItemDataDiri: ListRenderItem<ProfilePros> = ({item}) => (
@@ -139,6 +145,8 @@ const Profile = () => {
           navigation.navigate('Kalender_Akademik');
         } else if (item.text === 'IPK') {
           navigation.navigate('IPK');
+        } else if (item.text === 'Edit Data') {
+          bottomSheetModalRef_editProfile.current?.present();
         }
       }}>
       <View style={[styles.listItemIcon, {backgroundColor: item.color}]}>
@@ -231,6 +239,11 @@ const Profile = () => {
       <KafarohBottomSheet
         bottomSheetModalRef={bottomSheetModalRef}
         handlePresentModalPress={handlePresentModalPress}
+        data={data}
+      />
+      <EditProfileBottomSheet
+        bottomSheetModalRef={bottomSheetModalRef_editProfile}
+        handlePresentModalPress={handlePresentModalPress_editProfile}
         data={data}
       />
     </BottomSheetModalProvider>

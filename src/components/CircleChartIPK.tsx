@@ -22,7 +22,6 @@ const CircleChartIPK: React.FC<CircleChartIPKProps> = ({item}) => {
         style={styles.outercircle}>
         <View style={styles.innercircle}>
           <Text style={styles.textPoin}>{item.poin}</Text>
-
           <Text style={styles.textTitle}>{item.title}</Text>
         </View>
       </LinearGradient>
