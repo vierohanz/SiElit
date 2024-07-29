@@ -17,6 +17,7 @@ import presensi from './src/pages/presensi';
 import index from './src/pages/';
 import kalender_akademik from './src/pages/settings/kalender_akademik';
 import ipk from './src/pages/settings/ipk';
+import Toast from 'react-native-toast-message';
 
 export type RootStackParamList = {
   Splash: undefined;
@@ -24,6 +25,9 @@ export type RootStackParamList = {
   Index: undefined;
   Kalender_Akademik: undefined;
   IPK: undefined;
+  FetchUser: undefined;
+  Gas: undefined;
+  ref: undefined;
 };
 
 const Stack = createStackNavigator();
@@ -74,12 +78,14 @@ const AppNavigator = () => {
           name="Kalender_Akademik"
           component={kalender_akademik}
         />
+
         <Stack.Screen
           options={{headerShown: false}}
           name="IPK"
           component={ipk}
         />
       </Stack.Navigator>
+      <Toast ref={ref => Toast.setRef(ref as any)} />
     </NavigationContainer>
   );
 };

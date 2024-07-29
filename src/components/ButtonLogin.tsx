@@ -1,24 +1,39 @@
 import React from 'react';
 import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
-import {
   TouchableOpacity,
   Text,
   StyleSheet,
   TouchableOpacityProps,
+  ActivityIndicator,
 } from 'react-native';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 
 interface ButtonLoginProps extends TouchableOpacityProps {
   title: string;
   onPress: () => void;
+  loading?: boolean;
 }
 
-const ButtonLogin: React.FC<ButtonLoginProps> = ({title, onPress, ...rest}) => {
+const ButtonLogin: React.FC<ButtonLoginProps> = ({
+  title,
+  onPress,
+  loading,
+  ...rest
+}) => {
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress} {...rest}>
-      <Text style={styles.buttonText}>{title}</Text>
+    <TouchableOpacity
+      style={styles.button}
+      onPress={onPress}
+      disabled={loading}
+      {...rest}>
+      {loading ? (
+        <ActivityIndicator size="small" color="#ffffff" />
+      ) : (
+        <Text style={styles.buttonText}>{title}</Text>
+      )}
     </TouchableOpacity>
   );
 };

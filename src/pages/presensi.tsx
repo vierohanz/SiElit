@@ -86,8 +86,7 @@ const Presensi: React.FC = () => {
   useEffect(() => {
     const fetchAttendanceData = async () => {
       const token = await AsyncStorage.getItem('accessToken');
-      console.log('Fetched Token:', token); // Log token for debugging
-
+      console.log('Fetched Token:', token);
       if (!token) {
         console.log('No token found');
         setLoading(false);
@@ -153,7 +152,7 @@ const Presensi: React.FC = () => {
         <FlatList
           data={filteredData}
           renderItem={({item}) => <CardPresensi item={item} />}
-          keyExtractor={item => item.user_id.toString()} // Use unique identifier from the data
+          keyExtractor={item => item.user_id.toString()}
           contentContainerStyle={styles.contentContainer}
         />
       </View>
@@ -187,6 +186,7 @@ const styles = StyleSheet.create({
     marginTop: hp('4%'),
     flexDirection: 'row',
     paddingVertical: hp('1%'),
+    paddingHorizontal: wp('2%'),
   },
   filterButton: {
     alignItems: 'center',
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     marginTop: hp('2%'),
-    paddingHorizontal: wp('1.5%'),
+    paddingHorizontal: wp('3%'),
   },
   loadingContainer: {
     flex: 1,

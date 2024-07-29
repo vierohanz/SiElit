@@ -42,6 +42,7 @@
     "react-native-svg": "^15.4.0",
     "react-native-swipe-gestures": "^1.0.5",
     "react-native-table-component": "^1.2.2",
+    "react-native-toast-message": "^2.2.0",
     "tailwind-react-native-classnames": "^1.5.1",
     "tailwind-rn": "^4.2.0",
     "twrnc": "^4.4.0"

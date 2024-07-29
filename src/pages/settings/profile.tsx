@@ -6,6 +6,7 @@ import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../../../App';
 import {AuthContext} from '../../auth/AuthContext';
+import Toast from 'react-native-toast-message';
 import {
   View,
   Text,
@@ -27,30 +28,29 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import axios from 'axios';
 import KafarohBottomSheet from '../../components/KafarohBottomSheet';
 import EditProfileBottomSheet from '../../components/EditProfileBottomSheet';
 
-const datadiri: ProfilePros[] = [
-  // Data Diri
-  {
-    id: '1',
-    icon: 'mail-outline',
-    color: '#C7D02190',
-    text: 'johndoe@gmail.com',
-  },
-  {
-    id: '2',
-    icon: 'call-outline',
-    color: '#13A89D90',
-    text: '+6289504469254',
-  },
-  {
-    id: '3',
-    icon: 'locate',
-    color: '#94008E80',
-    text: 'Ds. Manokwari Rt 01 / Rw 03',
-  },
-];
+type DataDiri = {
+  id: number;
+  name: string;
+  card_id: string | null;
+  password: string;
+  birth_date: string;
+  grade: string;
+  telephone_number: string | null;
+  role: number;
+  class_type: number;
+  gender: number;
+  nis: string;
+  is_active: number;
+  inactive_reason: string | null;
+  origin: string;
+  residence_in_semarang: string;
+  role_name: string;
+  class_name: string;
+};
 
 const datalainnya: ProfilePros[] = [
   // Data untuk Diri
@@ -119,9 +119,12 @@ const initialData: Data = {
 };
 
 const Profile = () => {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [UsersData, setUsersData] = useState<DataDiri[]>([]);
   const [username, setUsername] = useState<string | null>(null);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [data, setData] = useState<Data>(initialData);
+  const [loading, setLoading] = useState(true);
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const bottomSheetModalRef_editProfile = useRef<BottomSheetModal>(null);
@@ -211,6 +214,63 @@ const Profile = () => {
     // Set total item
     setTotalItems(total);
   }, [data]);
+
+  useEffect(() => {
+    const fetchUsersData = async () => {
+      const token = await AsyncStorage.getItem('accessToken');
+      console.log('Fetched Token:', token);
+      if (!token) {
+        console.log('No token found');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await axios.get(
+          'https://api-si-elit.nisatecno.com/users/',
+          {
+            headers: {Authorization: `Bearer ${token}`},
+          },
+        );
+        console.log('Fetched Data:', response.data); // Log fetched data
+        setUsersData(response.data);
+      } catch (error) {
+        console.error('Error fetching Users data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsersData();
+  }, []);
+  const fetchUsersData = async () => {
+    const token = await AsyncStorage.getItem('accessToken');
+    console.log('Fetched Token:', token);
+    if (!token) {
+      console.log('No token found');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        'https://api-si-elit.nisatecno.com/users/',
+        {
+          headers: {Authorization: `Bearer ${token}`},
+        },
+      );
+      console.log('Fetched Data:', response.data); // Log fetched data
+      setUsersData(response.data);
+    } catch (error) {
+      console.error('Error fetching Users data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleUpdateProfile = () => {
+    fetchUsersData(); // Memanggil fungsi untuk mengambil data terbaru
+  };
+
   return (
     <BottomSheetModalProvider>
       <ScrollView style={styles.scrollView}>
@@ -255,13 +315,57 @@ const Profile = () => {
         </View>
         <View style={styles.dataContainer}>
           <Text style={styles.dataLabel}>Data Diri</Text>
-          <View style={styles.listContainer}>
-            <FlatList
-              data={datadiri}
-              renderItem={renderItemDataDiri}
-              keyExtractor={item => item.id}
-            />
-          </View>
+          {UsersData.map(user => (
+            <View style={styles.listContainer}>
+              <View style={styles.listItemContainer}>
+                <View
+                  style={[styles.listItemIcon, {backgroundColor: '#C7D02190'}]}>
+                  <Ionicons
+                    name={'id-card-outline'}
+                    size={wp('7.8%')}
+                    color={'#FFFFFF'}
+                  />
+                </View>
+                <Text style={styles.listItemText}>{user.nis}</Text>
+              </View>
+              <View style={styles.listItemContainer}>
+                <View
+                  style={[styles.listItemIcon, {backgroundColor: '#FFCC90'}]}>
+                  <Ionicons
+                    name={'book-outline'}
+                    size={wp('7.8%')}
+                    color={'#FFFFFF'}
+                  />
+                </View>
+                <Text style={styles.listItemText}>{user.class_name}</Text>
+              </View>
+              <View key={user.id} style={styles.listItemContainer}>
+                <View
+                  style={[styles.listItemIcon, {backgroundColor: '#13A89D90'}]}>
+                  <Ionicons
+                    name={'call-outline'}
+                    size={wp('7.8%')}
+                    color={'#FFFFFF'}
+                  />
+                </View>
+                <Text style={styles.listItemText}>{user.telephone_number}</Text>
+              </View>
+
+              <View style={styles.listItemContainer}>
+                <View
+                  style={[styles.listItemIcon, {backgroundColor: '#94008E80'}]}>
+                  <Ionicons
+                    name={'locate'}
+                    size={wp('7.8%')}
+                    color={'#FFFFFF'}
+                  />
+                </View>
+                <Text style={styles.listItemText}>
+                  {user.residence_in_semarang}
+                </Text>
+              </View>
+            </View>
+          ))}
           <Text style={styles.dataLabel}>Lainnya</Text>
           <View style={styles.listContainer}>
             <FlatList
@@ -280,7 +384,7 @@ const Profile = () => {
       <EditProfileBottomSheet
         bottomSheetModalRef={bottomSheetModalRef_editProfile}
         handlePresentModalPress={handlePresentModalPress_editProfile}
-        data={data}
+        onUpdate={handleUpdateProfile}
       />
     </BottomSheetModalProvider>
   );
@@ -412,7 +516,7 @@ const styles = StyleSheet.create({
     color: '#13A89D',
   },
   dataContainer: {
-    height: hp('70%'), // Hati-hati dengan Ini
+    height: hp('80%'), // Hati-hati dengan Ini
     width: wp('100%'),
     backgroundColor: '#fff',
     paddingHorizontal: 10,

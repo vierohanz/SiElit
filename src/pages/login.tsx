@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import ButtonLogin from '../components/ButtonLogin';
 import TextInputLogin from '../components/TextInputLogin';
@@ -29,6 +30,7 @@ const {height} = Dimensions.get('window');
 const Login = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const {login} = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
 
   const [loginData, setLoginData] = useState({
     name: '',
@@ -43,7 +45,7 @@ const Login = () => {
       if (!loginData.name)
         setLoginData(prev => ({...prev, nameErr: 'tidak boleh kosong'}));
       Snackbar.show({
-        text: 'Username tidak boleh kosong.',
+        text: 'Data tidak boleh kosong.',
         duration: 3000,
         backgroundColor: '#1E1E1E',
         textColor: 'white',
@@ -51,7 +53,7 @@ const Login = () => {
       if (!loginData.password)
         setLoginData(prev => ({...prev, passwordErr: 'tidak boleh kosong'}));
       Snackbar.show({
-        text: 'Password tidak boleh kosong.',
+        text: 'Data tidak boleh kosong.',
         duration: 3000,
         backgroundColor: '#1E1E1E',
         textColor: 'white',
@@ -62,6 +64,8 @@ const Login = () => {
         password: loginData.password,
       });
 
+      setLoading(true); // Mulai loading spinner
+
       axios
         .post(`${appSettings.api}/auth/login`, {
           name: loginData.name,
@@ -71,7 +75,7 @@ const Login = () => {
           console.log('Access Token:', res.data.accessToken);
           if (res.data.accessToken) {
             await login(res.data.accessToken);
-            await AsyncStorage.setItem('accessToken', res.data.accessToken); // Ensure the key is 'accessToken'
+            await AsyncStorage.setItem('accessToken', res.data.accessToken);
             await AsyncStorage.setItem('username', loginData.name);
 
             navigation.navigate('Index');
@@ -83,6 +87,7 @@ const Login = () => {
               textColor: 'white',
             });
           }
+          setLoading(false); // Selesai loading spinner
         })
         .catch(async (err: any) => {
           if (err.response && err.response.status === 401) {
@@ -94,6 +99,7 @@ const Login = () => {
               backgroundColor: 'white',
             });
           }
+          setLoading(false); // Selesai loading spinner
         });
     }
   };
@@ -135,7 +141,12 @@ const Login = () => {
                 onChange={toggleRememberMe}
               />
             </View>
-            <ButtonLogin title="Submit" onPress={handleLogin} />
+            <ButtonLogin
+              title="Submit"
+              onPress={handleLogin}
+              disabled={loading}
+            />
+            {loading && <ActivityIndicator size="small" color="#13A89D" />}
           </View>
         </View>
       </ScrollView>
@@ -183,6 +194,11 @@ const styles = StyleSheet.create({
   },
   rememberMeContainer: {
     width: '78%',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
