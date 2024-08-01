@@ -549,12 +549,14 @@ const styles = StyleSheet.create({
     width: wp('100%'),
     backgroundColor: '#fff',
     paddingHorizontal: 10,
+    marginTop: hp('1%'),
     marginBottom: hp('10%'),
   },
   dataLabel: {
     fontFamily: 'Poppins-SemiBold',
     fontSize: wp('4%'),
     color: '#B8B8B8',
+    marginTop: hp('1%'),
     // fontWeight: 'bold',
   },
   listContainer: {

@@ -25,12 +25,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import appSettings from '../../Appsettings';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Dropdown} from 'react-native-element-dropdown';
+import Toast from 'react-native-toast-message';
 
 const Perizinan = () => {
-  const [pengajian, setPengajian] = useState('');
-  const [alasan, setAlasan] = useState('');
-  const [selectedFile, setSelectedFile] =
-    useState<DocumentPickerResponse | null>(null);
+  const [class_id, setclass_id] = useState<any>('');
+  const [description, setdescription] = useState('');
+  const [img_file, setimg_file] = useState<DocumentPickerResponse | null>(null);
   const [data, setData] = useState<any[]>([]);
   const [kelasOptions, setKelasOptions] = useState<any[]>([]);
   const [selectedKelas, setSelectedKelas] = useState<string>('');
@@ -41,62 +41,77 @@ const Perizinan = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = await AsyncStorage.getItem('accessToken');
-        if (!token) {
-          console.log('No token found');
-          setLoading(false);
-          return;
-        }
-
-        // Fetch permits data
-        const response = await axios.get(`${appSettings.api}/permits`, {
-          headers: {Authorization: `Bearer ${token}`},
-        });
-        setData(response.data);
-
-        // Fetch classes data
-        const classesResponse = await axios.get(`${appSettings.api}/classes`, {
-          headers: {Authorization: `Bearer ${token}`},
-        });
-        const classItems = classesResponse.data.map((item: any) => ({
-          label: item.name, // Adjust this based on your API response
-          value: item.id,
-        }));
-        setKelasOptions(classItems);
-        setItems(classItems);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchData();
   }, []);
 
+  const fetchData = async () => {
+    try {
+      const token = await AsyncStorage.getItem('accessToken');
+      if (!token) {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Token tidak ditemukan. Tolong login lagi.',
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Fetch permits data
+      const response = await axios.get(`${appSettings.api}/permits`, {
+        headers: {Authorization: `Bearer ${token}`},
+      });
+      setData(response.data);
+
+      // Fetch classes data
+      const classesResponse = await axios.get(`${appSettings.api}/classes`, {
+        headers: {Authorization: `Bearer ${token}`},
+      });
+      const classItems = classesResponse.data.map((item: any) => ({
+        label: item.name, // Adjust this based on your API response
+        value: item.id,
+      }));
+      setKelasOptions(classItems);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const resetForm = () => {
+    setclass_id('');
+    setdescription('');
+    setimg_file(null);
+    setValue(null);
+  };
+
   const handleIzin = async () => {
-    if (pengajian === '' || alasan === '' || !selectedFile || !value) {
-      Alert.alert('Error', 'Semua field harus diisi dan file harus dipilih.');
+    if (class_id === '' || description === '' || !img_file) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Tolong inputkan semua form',
+      });
       return;
     }
 
     const formData = new FormData();
-    formData.append('pengajian', pengajian);
-    formData.append('alasan', alasan);
-    formData.append('kelas', value);
-    formData.append('file', {
-      uri: selectedFile.uri,
-      type: selectedFile.type,
-      name: selectedFile.name,
+    formData.append('class_id', class_id);
+    formData.append('description', description);
+    formData.append('img_file', {
+      uri: img_file.uri,
+      type: img_file.type,
+      name: img_file.name,
     });
 
     try {
       const token = await AsyncStorage.getItem('accessToken');
       if (!token) {
-        Alert.alert('Error', 'Token tidak ditemukan. Silakan login ulang.');
-        return;
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Token tidak ditemukan. Tolong login lagi.',
+        });
       }
 
       const response = await axios.post(
@@ -109,20 +124,28 @@ const Perizinan = () => {
           },
         },
       );
-
-      Alert.alert('Success', response.data.msg);
-      navigation.navigate('perizinan');
+      Toast.show({
+        type: 'success',
+        text1: 'success',
+        text2: 'Berhasil membuat perizinan',
+      });
+      resetForm();
+      // navigation.navigate('perizinan');
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error('Error response:', error.response);
-        Alert.alert(
-          'Error',
-          error.response?.data?.message ||
-            'Terjadi kesalahan saat mengirim data',
-        );
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Anda sudah izin sebelumnya',
+        });
       } else {
         console.error('Error:', error);
-        Alert.alert('Error', 'Terjadi kesalahan saat mengirim data');
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Terjadi kesalahan saat mengirim data.',
+        });
       }
     }
   };
@@ -132,7 +155,7 @@ const Perizinan = () => {
       const res = await DocumentPicker.pickSingle({
         type: [DocumentPicker.types.allFiles],
       });
-      setSelectedFile(res);
+      setimg_file(res);
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         console.log('User cancelled file picking');
@@ -156,14 +179,11 @@ const Perizinan = () => {
           <Dropdown
             style={[
               styles.dropdown,
-              {
-                borderColor: isFocused ? '#13A89D' : '#ccc',
-              },
+              {borderColor: isFocused ? '#13A89D' : '#ccc'},
             ]}
             placeholderStyle={styles.placeholderStyle}
             selectedTextStyle={styles.textItem}
-            inputSearchStyle={{}}
-            data={items}
+            data={kelasOptions}
             search
             maxHeight={300}
             containerStyle={[styles.itemContainer]}
@@ -173,11 +193,11 @@ const Perizinan = () => {
             valueField="value"
             placeholder="Pilih Pengajian"
             searchPlaceholder="Search..."
-            value={value}
+            value={class_id}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             onChange={item => {
-              setValue(item.value);
+              setclass_id(item.value);
             }}
           />
         </View>
@@ -185,8 +205,8 @@ const Perizinan = () => {
           <Text style={styles.labelText}>Alasan</Text>
           <TextInputIzin
             placeholder="Masukkan alasan"
-            value={alasan}
-            onChangeText={setAlasan}
+            value={description}
+            onChangeText={setdescription}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -199,13 +219,10 @@ const Perizinan = () => {
             />
             <View style={styles.fileInfo}>
               <Text
-                style={[
-                  styles.fileName,
-                  !selectedFile && styles.placeholderText,
-                ]}
+                style={[styles.fileName, !img_file && styles.placeholderText]}
                 numberOfLines={1}
                 ellipsizeMode="tail">
-                {selectedFile ? selectedFile.name : 'No file selected'}
+                {img_file ? img_file.name : 'No file selected'}
               </Text>
             </View>
           </View>

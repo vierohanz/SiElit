@@ -141,6 +141,7 @@ const EditProfileBottomSheet: React.FC<EditProfileBottomSheetProps> = ({
       setPasswordNewConfirm('');
       handlePresentModalPress();
       onUpdate();
+      bottomSheetModalRef.current?.close();
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {

@@ -12,6 +12,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {useNavigation, useRoute, RouteProp} from '@react-navigation/native';
 import appSettings from '../../Appsettings';
 
 type CardIzinProps = {
@@ -29,11 +30,14 @@ type CardIzinProps = {
   };
   isLast: boolean;
 };
-
+type RouteParams = {
+  CardIzin: {newPermit?: any};
+};
 const CardIzin: React.FC<CardIzinProps> = ({item, isLast}) => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [date, time] = item.start_date.split('T');
+  const route = useRoute<RouteProp<RouteParams, 'CardIzin'>>();
 
   const capitalizeFirstLetter = (text: string): string => {
     if (!text) return '';
@@ -70,39 +74,35 @@ const CardIzin: React.FC<CardIzinProps> = ({item, isLast}) => {
     return words.slice(0, 2).join(' ');
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = await AsyncStorage.getItem('accessToken');
-        console.log('Fetched Token:', token);
-        if (!token) {
-          console.log('No token found');
-          setLoading(false);
-          return;
-        }
-
-        const response = await axios.get(`${appSettings.api}/permits`, {
-          headers: {Authorization: `Bearer ${token}`},
-        });
-
-        console.log('Response Status:', response.status); // Log status
-        console.log('Response Headers:', response.headers); // Log headers
-        console.log('Response Data:', response.data); // Log data
-
-        if (response.data.length === 0) {
-          console.log('No data returned from API');
-        }
-
-        setData(response.data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
+  const fetchData = async () => {
+    try {
+      const token = await AsyncStorage.getItem('accessToken');
+      console.log('Fetched Token:', token);
+      if (!token) {
+        console.log('No token found');
         setLoading(false);
+        return;
       }
-    };
 
-    fetchData();
-  }, []);
+      const response = await axios.get(`${appSettings.api}/permits`, {
+        headers: {Authorization: `Bearer ${token}`},
+      });
+
+      console.log('Response Status:', response.status);
+      console.log('Response Headers:', response.headers);
+      console.log('Response Data:', response.data);
+
+      if (response.data.length === 0) {
+        console.log('No data returned from API');
+      }
+
+      setData(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   let statusColor = '#000';
   if (item.is_approved === 1) {
@@ -130,6 +130,15 @@ const CardIzin: React.FC<CardIzinProps> = ({item, isLast}) => {
   const formattedTimeStart = time
     ? time.split(':')[0] + ':' + time.split(':')[1]
     : '';
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+  useEffect(() => {
+    if (route.params?.newPermit) {
+      setData(prevData => [route.params.newPermit, ...prevData]);
+    }
+  }, [route.params?.newPermit]);
 
   return (
     <View style={[styles.cardContainer, isLast && styles.lastCard]}>
