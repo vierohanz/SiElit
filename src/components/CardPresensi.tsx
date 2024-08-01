@@ -38,7 +38,7 @@ const CardPresensi: React.FC<CardPresensiProps> = ({item}) => {
   // Format tanggal untuk mendapatkan nama hari dengan maksimal 3 karakter
   const dateObject = new Date(date);
   const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
-  const dayName = dayNames[dateObject.getDay()]; // Mengambil nama hari dari objek Date
+  const dayName = dayNames[dateObject.getDay()];
 
   // Format tanggal dalam format 'DD MMMM YYYY'
   const formattedDate = formatDate(date);
@@ -80,7 +80,7 @@ const CardPresensi: React.FC<CardPresensiProps> = ({item}) => {
     case 'hadir':
       statusColor = '#2DCF2A'; // Green
       break;
-    case 'zin':
+    case 'izin':
       statusColor = '#0047FF'; // Yellow
       break;
     case 'terlambat':

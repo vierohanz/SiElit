@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import {
   widthPercentageToDP as wp,
@@ -8,13 +8,34 @@ import {LinearGradient} from 'react-native-linear-gradient';
 import CardRemain from '../components/CardRemain';
 import CircleChart from '../components/CircleChart';
 import BarChart from '../components/BarChart';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function target() {
+  const [username, setUsername] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadUsername = async () => {
+      try {
+        const storedUsername = await AsyncStorage.getItem('username');
+        if (storedUsername) {
+          const truncatedUsername =
+            storedUsername.length > 28
+              ? storedUsername.substring(0, 28) + '...'
+              : storedUsername;
+          setUsername(truncatedUsername);
+        }
+      } catch (error) {
+        console.error('Failed to load username from AsyncStorage:', error);
+      }
+    };
+
+    loadUsername();
+  }, []);
   return (
     <ScrollView style={{flex: 1, backgroundColor: '#fff'}}>
       <View style={{flex: 1, paddingBottom: hp('15%')}}>
         <LinearGradient colors={['#13A89D', '#07423E']} style={styles.header} />
-        <Text style={styles.headerText}>John Doe</Text>
+        <Text style={styles.headerText}>{username}</Text>
         <Text style={styles.subheaderText}>Kelas Lambatan</Text>
         {/* Target Card */}
         <View style={styles.cardTarget}>
@@ -114,15 +135,15 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontFamily: 'Poppins-SemiBold',
-    fontSize: wp('6%'),
-    color: '#fff',
+    fontSize: wp('4.5%'),
+    color: '#C7D021',
     marginTop: hp('-23%'),
     marginBottom: hp('-1%'),
     marginHorizontal: wp('3%'),
   },
   subheaderText: {
     fontFamily: 'Poppins-Regular',
-    fontSize: wp('3%'),
+    fontSize: wp('3.5%'),
     color: '#fff',
     marginHorizontal: wp('3%'),
     marginBottom: hp('2%'),

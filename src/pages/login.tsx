@@ -8,6 +8,7 @@ import {
   Platform,
   ScrollView,
   ActivityIndicator,
+  StatusBar,
 } from 'react-native';
 import ButtonLogin from '../components/ButtonLogin';
 import TextInputLogin from '../components/TextInputLogin';
@@ -90,6 +91,7 @@ const Login = () => {
           setLoading(false); // Selesai loading spinner
         })
         .catch(async (err: any) => {
+          console.log('Error:', err);
           if (err.response && err.response.status === 401) {
             await Keychain.resetGenericPassword();
           } else {
@@ -99,7 +101,7 @@ const Login = () => {
               backgroundColor: 'white',
             });
           }
-          setLoading(false); // Selesai loading spinner
+          setLoading(false);
         });
     }
   };
@@ -116,6 +118,11 @@ const Login = () => {
     <KeyboardAvoidingView keyboardVerticalOffset={Platform.OS ? 10 : 0}>
       <ScrollView keyboardShouldPersistTaps="handled">
         <View style={styles.container}>
+          <StatusBar
+            barStyle="light-content"
+            backgroundColor="rgba(0, 0, 0, 0.2)"
+            translucent={true}
+          />
           <View style={styles.welcomeContainer}>
             <Text style={styles.welcomeText}>Selamat Datang,</Text>
             <Text style={styles.infoText}>
@@ -162,7 +169,7 @@ const styles = StyleSheet.create({
   welcomeContainer: {
     paddingLeft: '5%',
     paddingTop: '20%',
-    height: height * 0.3,
+    height: height * 0.25,
   },
   welcomeText: {
     fontWeight: 'bold',
@@ -181,7 +188,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     justifyContent: 'center',
     alignItems: 'center',
-    height: height * 0.735,
+    height: hp('78%'),
     borderBottomLeftRadius: 120,
     borderTopRightRadius: 250,
     padding: 20,

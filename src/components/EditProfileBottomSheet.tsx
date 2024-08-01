@@ -21,6 +21,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import ButtonIzin from './ButtonIzin';
+import appSettings from '../../Appsettings';
 
 interface EditProfileBottomSheetProps {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
@@ -62,18 +63,17 @@ const EditProfileBottomSheet: React.FC<EditProfileBottomSheetProps> = ({
 
   const fetchUserData = async (token: string) => {
     try {
-      const response = await axios.get(
-        'https://api-si-elit.nisatecno.com/users',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const response = await axios.get(`${appSettings.api}/users`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
-      const {telephone_number, residence_in_semarang, password} = response.data;
+      });
+      console.log('API response:', response.data);
+      const userData = response.data[0];
+      const {telephone_number, residence_in_semarang} = userData;
       setTelepon(telephone_number);
       setAlamat(residence_in_semarang);
-      setPassword(password);
+
       setLoading(false);
     } catch (error) {
       Toast.show({
@@ -118,7 +118,7 @@ const EditProfileBottomSheet: React.FC<EditProfileBottomSheetProps> = ({
 
     try {
       await axios.put(
-        'https://api-si-elit.nisatecno.com/users',
+        `${appSettings.api}/users`,
         {
           telephone_number: telepon,
           residence_in_semarang: alamat,
@@ -136,6 +136,9 @@ const EditProfileBottomSheet: React.FC<EditProfileBottomSheetProps> = ({
         text1: 'Success',
         text2: 'Update berhasil',
       });
+      setPassword('');
+      setPasswordNew('');
+      setPasswordNewConfirm('');
       handlePresentModalPress();
       onUpdate();
     } catch (error) {
@@ -153,9 +156,6 @@ const EditProfileBottomSheet: React.FC<EditProfileBottomSheetProps> = ({
               type: 'error',
               text1: 'Update failed',
               text2: 'Telepon, alamat, and old password are required',
-              // `Failed to update profile: ${
-              //   error.response.data.message || error.message
-              // }`
               visibilityTime: 3000,
             });
           }
@@ -211,8 +211,10 @@ const EditProfileBottomSheet: React.FC<EditProfileBottomSheetProps> = ({
                 Data
               </Text>
             </View>
+
             <View style={styles.form}>
               <Text style={styles.textForm}>Telepon</Text>
+
               <TextInputIzin
                 placeholder="ex : 089065432123"
                 value={telepon}

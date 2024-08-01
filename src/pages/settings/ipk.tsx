@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  StatusBar,
 } from 'react-native';
 import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -23,6 +24,11 @@ const ipk: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="rgba(0, 0, 0, 0.2)"
+        translucent={true}
+      />
       <ScrollView>
         <View style={styles.header}>
           <TouchableOpacity
@@ -39,7 +45,7 @@ const ipk: React.FC = () => {
               Selamat atas perolehan {'\n'}nilai anda
             </Text>
           </View>
-          <CircleChartIPK item={{poin: 3.53, title: 'Value'}}></CircleChartIPK>
+          <CircleChartIPK item={{poin: 3.53, title: 'GPA'}}></CircleChartIPK>
         </View>
         <View style={styles.cardBody1}>
           <View style={styles.cardBody2}>
@@ -182,6 +188,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'flex-end',
     marginVertical: hp('1.8%'),
+    marginHorizontal: wp('-2%'),
   },
   cardTotal: {
     flexDirection: 'row',

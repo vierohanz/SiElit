@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   textIndicator: {
+    marginVertical: hp('1%'),
     textAlign: 'right',
     fontFamily: 'Poppins-Regular',
     fontSize: wp('3%'),

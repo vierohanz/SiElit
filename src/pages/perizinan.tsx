@@ -1,5 +1,12 @@
-import React, {useState} from 'react';
-import {View, ScrollView, StyleSheet, Text, Alert} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Text,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -13,30 +20,64 @@ import DocumentPicker, {
 } from 'react-native-document-picker';
 import UploadButton from '../components/uploadbutton';
 import CardIzin from '../components/CardIzin';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import appSettings from '../../Appsettings';
+import DropDownPicker from 'react-native-dropdown-picker';
+import {Dropdown} from 'react-native-element-dropdown';
 
-const data = [
-  {
-    id: '1',
-    day: 'Sen',
-    time: '18:30',
-    title: 'Pengajian Desa',
-    class: 'Lambatan',
-    status: 'Disetujui',
-    name: 'Raishannan',
-    date: '2024-07-21',
-    description: 'Sedang sakit diare dan juga pilek mohon izin',
-    image: '../assets/images/hannan.jpg',
-  },
-];
 const Perizinan = () => {
   const [pengajian, setPengajian] = useState('');
   const [alasan, setAlasan] = useState('');
   const [selectedFile, setSelectedFile] =
     useState<DocumentPickerResponse | null>(null);
+  const [data, setData] = useState<any[]>([]);
+  const [kelasOptions, setKelasOptions] = useState<any[]>([]);
+  const [selectedKelas, setSelectedKelas] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(true);
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState<string | null>(null);
+  const [items, setItems] = useState<any[]>([]);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-  const handleIzin = () => {
-    if (pengajian === '' || alasan === '' || !selectedFile) {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = await AsyncStorage.getItem('accessToken');
+        if (!token) {
+          console.log('No token found');
+          setLoading(false);
+          return;
+        }
+
+        // Fetch permits data
+        const response = await axios.get(`${appSettings.api}/permits`, {
+          headers: {Authorization: `Bearer ${token}`},
+        });
+        setData(response.data);
+
+        // Fetch classes data
+        const classesResponse = await axios.get(`${appSettings.api}/classes`, {
+          headers: {Authorization: `Bearer ${token}`},
+        });
+        const classItems = classesResponse.data.map((item: any) => ({
+          label: item.name, // Adjust this based on your API response
+          value: item.id,
+        }));
+        setKelasOptions(classItems);
+        setItems(classItems);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleIzin = async () => {
+    if (pengajian === '' || alasan === '' || !selectedFile || !value) {
       Alert.alert('Error', 'Semua field harus diisi dan file harus dipilih.');
       return;
     }
@@ -44,29 +85,46 @@ const Perizinan = () => {
     const formData = new FormData();
     formData.append('pengajian', pengajian);
     formData.append('alasan', alasan);
+    formData.append('kelas', value);
     formData.append('file', {
       uri: selectedFile.uri,
       type: selectedFile.type,
       name: selectedFile.name,
     });
 
-    fetch('URL_ENDPOINT_ANDA', {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Success:', data);
-        Alert.alert('Success', 'Data berhasil dikirim');
-        navigation.navigate('perizinan');
-      })
-      .catch(error => {
+    try {
+      const token = await AsyncStorage.getItem('accessToken');
+      if (!token) {
+        Alert.alert('Error', 'Token tidak ditemukan. Silakan login ulang.');
+        return;
+      }
+
+      const response = await axios.post(
+        `${appSettings.api}/permits`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      Alert.alert('Success', response.data.msg);
+      navigation.navigate('perizinan');
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Error response:', error.response);
+        Alert.alert(
+          'Error',
+          error.response?.data?.message ||
+            'Terjadi kesalahan saat mengirim data',
+        );
+      } else {
         console.error('Error:', error);
         Alert.alert('Error', 'Terjadi kesalahan saat mengirim data');
-      });
+      }
+    }
   };
 
   const selectFile = async () => {
@@ -83,6 +141,7 @@ const Perizinan = () => {
       }
     }
   };
+  const [isFocused, setIsFocused] = useState(false);
 
   return (
     <ScrollView style={styles.scrollView}>
@@ -94,10 +153,32 @@ const Perizinan = () => {
         </View>
         <View style={styles.inputContainer}>
           <Text style={styles.labelText}>Pengajian</Text>
-          <TextInputIzin
-            placeholder="jenis pengajian"
-            value={pengajian}
-            onChangeText={setPengajian}
+          <Dropdown
+            style={[
+              styles.dropdown,
+              {
+                borderColor: isFocused ? '#13A89D' : '#ccc',
+              },
+            ]}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.textItem}
+            inputSearchStyle={{}}
+            data={items}
+            search
+            maxHeight={300}
+            containerStyle={[styles.itemContainer]}
+            itemContainerStyle={[styles.item]}
+            itemTextStyle={[styles.teks]}
+            labelField="label"
+            valueField="value"
+            placeholder="Pilih Pengajian"
+            searchPlaceholder="Search..."
+            value={value}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            onChange={item => {
+              setValue(item.value);
+            }}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -133,19 +214,72 @@ const Perizinan = () => {
       </View>
       <View style={styles.riwayatContainer}>
         <Text style={styles.riwayatText}>Riwayat</Text>
-        {data.map((item, index) => (
-          <CardIzin
-            key={item.id}
-            item={item}
-            isLast={index === data.length - 1}
-          />
-        ))}
+        {loading ? (
+          <ActivityIndicator size="large" color="#13A89D" />
+        ) : (
+          data.map((item, index) => (
+            <CardIzin
+              key={item.id}
+              item={item}
+              isLast={index === data.length - 1}
+            />
+          ))
+        )}
       </View>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  teks: {
+    color: '#000',
+  },
+  itemContainer: {
+    padding: 5,
+    borderRadius: 20,
+  },
+  item: {
+    marginVertical: hp('1%'),
+    marginHorizontal: 5,
+    height: hp('7.5%'),
+    borderRadius: 20,
+  },
+  itemText: {
+    fontSize: 16,
+  },
+  dropdown: {
+    width: '100%',
+    paddingLeft: wp('5%'),
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    borderBottomLeftRadius: 15,
+    borderBottomRightRadius: 15,
+    height: hp('6.8%'),
+    backgroundColor: 'white',
+    borderRadius: 12,
+    borderWidth: 2,
+    padding: 12,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+
+    color: '#000',
+    elevation: 1,
+  },
+  textItem: {
+    flex: 1,
+    fontSize: wp('4.3%'),
+    color: '#000000',
+  },
+  placeholderStyle: {
+    fontSize: wp('4.3%'),
+    color: '#000000',
+  },
+
   scrollView: {
     backgroundColor: '#fff',
     paddingBottom: -1000,
@@ -197,30 +331,55 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   fileInfo: {
-    marginLeft: wp('2%'),
-    maxWidth: wp('60%'),
-    flexShrink: 1,
+    marginLeft: wp('3%'),
+    flex: 1,
   },
   fileName: {
-    fontSize: wp('4%'),
     color: '#333',
+    fontSize: wp('4%'),
   },
   placeholderText: {
-    color: '#888',
+    color: '#9E9E9E',
   },
   riwayatContainer: {
     marginTop: hp('2%'),
     paddingHorizontal: wp('5%'),
-    fontSize: wp('5%'),
-    fontWeight: '800',
-    color: '#000',
-    marginBottom: 10,
   },
   riwayatText: {
-    color: '#000',
     fontSize: wp('5%'),
-    marginBottom: 10,
     fontWeight: '700',
+    color: '#333',
+    marginBottom: hp('1%'),
+  },
+});
+
+const pickerSelectStyles = StyleSheet.create({
+  container: {
+    marginTop: wp('0.5%'),
+    height: hp('5.8%'),
+    width: '100%',
+    borderColor: '#ccc',
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    borderBottomLeftRadius: 15,
+    borderBottomRightRadius: 15,
+    borderWidth: 1,
+    elevation: 5,
+    borderRadius: 5,
+    marginBottom: hp('1%'),
+    paddingHorizontal: 10,
+    backgroundColor: '#fff',
+    color: '#000000',
+    fontWeight: '400',
+    fontSize: wp('4%'),
+    paddingLeft: wp('5%'),
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.3,
+    shadowRadius: 2, // Adjust this value as needed
+  },
+  text: {
+    fontSize: wp('4%'),
   },
 });
 

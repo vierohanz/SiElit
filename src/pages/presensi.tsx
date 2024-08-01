@@ -16,6 +16,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import CardPresensi from '../components/CardPresensi'; // Pastikan path ini benar
+import appSettings from '../../Appsettings';
 
 const filterOptions = [
   {id: '1', title: 'Semua'},
@@ -94,12 +95,9 @@ const Presensi: React.FC = () => {
       }
 
       try {
-        const response = await axios.get(
-          'https://api-si-elit.nisatecno.com/attendances/',
-          {
-            headers: {Authorization: `Bearer ${token}`},
-          },
-        );
+        const response = await axios.get(`${appSettings.api}/attendances/`, {
+          headers: {Authorization: `Bearer ${token}`},
+        });
         console.log('Fetched Data:', response.data); // Log fetched data
         setAttendanceData(response.data);
       } catch (error) {

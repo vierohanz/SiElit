@@ -41,13 +41,13 @@ type IoniconName =
   | 'apps-sharp';
 
 const {height} = Dimensions.get('window');
-const getBottomMargin = () => {
-  if (height < 770) {
-    return 30;
-  } else {
-    return 80;
-  }
-};
+// const getBottomMargin = () => {
+//   if (height < 770) {
+//     return 30;
+//   } else {
+//     return 30;
+//   }
+// };
 const getHeight = () => {
   if (height < 770) {
     return 55;
@@ -143,8 +143,8 @@ const Index = () => {
       type="DOWN"
       style={[styles.bottomBar, {display: isKeyboardVisible ? 'none' : 'flex'}]}
       shadowStyle={styles.shadow}
-      height={getHeight()}
-      circleWidth={50}
+      height={60}
+      circleWidth={57}
       bgColor="#13A89D"
       initialRouteName="home"
       borderTopLeftRight
@@ -217,13 +217,13 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   btnCircleUp: {
-    width: wp('16%'),
-    height: wp('16%'),
+    width: wp('17%'),
+    height: wp('17%'),
     borderRadius: 45,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#13A89D',
-    bottom: getBottomMargin(),
+    bottom: hp('4%'),
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

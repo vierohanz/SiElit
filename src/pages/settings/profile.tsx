@@ -7,6 +7,7 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../../../App';
 import {AuthContext} from '../../auth/AuthContext';
 import Toast from 'react-native-toast-message';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {
   View,
   Text,
@@ -17,6 +18,8 @@ import {
   FlatList,
   ListRenderItem,
   TouchableOpacity,
+  Button,
+  Modal,
 } from 'react-native';
 import BottomSheet, {
   BottomSheetModal,
@@ -31,6 +34,10 @@ import {
 import axios from 'axios';
 import KafarohBottomSheet from '../../components/KafarohBottomSheet';
 import EditProfileBottomSheet from '../../components/EditProfileBottomSheet';
+import appSettings from '../../../Appsettings';
+import AvatarPicker from '../../components/avatarpicaker';
+import BottomSheetAvatar from '../../components/BottomSheetAvatar';
+import {useProfile} from '../../../profileContext';
 
 type DataDiri = {
   id: number;
@@ -119,16 +126,16 @@ const initialData: Data = {
 };
 
 const Profile = () => {
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [UsersData, setUsersData] = useState<DataDiri[]>([]);
   const [username, setUsername] = useState<string | null>(null);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [data, setData] = useState<Data>(initialData);
   const [loading, setLoading] = useState(true);
-
+  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const bottomSheetModalProfile = useRef<BottomSheetModal>(null);
   const bottomSheetModalRef_editProfile = useRef<BottomSheetModal>(null);
-
+  const [isAvatarPickerVisible, setAvatarPickerVisible] = useState(false);
   useEffect(() => {
     const loadUsername = async () => {
       try {
@@ -141,11 +148,35 @@ const Profile = () => {
 
     loadUsername();
   }, []);
+  const toggleAvatarPicker = () => {
+    console.log('Avatar picker toggled');
+    setAvatarPickerVisible(!isAvatarPickerVisible);
+    bottomSheetModalProfile.current?.present();
+  };
+  const handleSelectAvatar = async (avatar: string) => {
+    console.log('Selected avatar:', avatar); // Debugging: Menampilkan avatar yang dipilih di console
+    setSelectedAvatar(avatar);
+    await AsyncStorage.setItem('selectedAvatar', avatar);
+    setAvatarPickerVisible(false);
+    bottomSheetModalProfile.current?.close();
+  };
+  useEffect(() => {
+    const loadAvatar = async () => {
+      const storedAvatar = await AsyncStorage.getItem('selectedAvatar');
+      if (storedAvatar) {
+        setSelectedAvatar(JSON.parse(storedAvatar));
+      }
+    };
+
+    loadAvatar();
+  }, []);
+  const handlePresentProfile = () => {
+    bottomSheetModalProfile.current?.present();
+  };
 
   const handlePresentModalPress = () => {
     bottomSheetModalRef.current?.present();
   };
-
   const handleSignOut = async () => {
     try {
       // Hapus token dari Keychain
@@ -164,15 +195,6 @@ const Profile = () => {
   const handlePresentModalPress_editProfile = () => {
     bottomSheetModalRef_editProfile.current?.present();
   };
-
-  const renderItemDataDiri: ListRenderItem<ProfilePros> = ({item}) => (
-    <View style={styles.listItemContainer}>
-      <View style={[styles.listItemIcon, {backgroundColor: item.color}]}>
-        <Ionicons name={item.icon} size={wp('7.8%')} color={'#FFFFFF'} />
-      </View>
-      <Text style={styles.listItemText}>{item.text}</Text>
-    </View>
-  );
 
   const renderItemLainnya: ListRenderItem<ProfilePros> = ({item}) => (
     <TouchableOpacity
@@ -226,12 +248,9 @@ const Profile = () => {
       }
 
       try {
-        const response = await axios.get(
-          'https://api-si-elit.nisatecno.com/users/',
-          {
-            headers: {Authorization: `Bearer ${token}`},
-          },
-        );
+        const response = await axios.get(`${appSettings.api}/users`, {
+          headers: {Authorization: `Bearer ${token}`},
+        });
         console.log('Fetched Data:', response.data); // Log fetched data
         setUsersData(response.data);
       } catch (error) {
@@ -253,12 +272,9 @@ const Profile = () => {
     }
 
     try {
-      const response = await axios.get(
-        'https://api-si-elit.nisatecno.com/users/',
-        {
-          headers: {Authorization: `Bearer ${token}`},
-        },
-      );
+      const response = await axios.get(`${appSettings.api}/users`, {
+        headers: {Authorization: `Bearer ${token}`},
+      });
       console.log('Fetched Data:', response.data); // Log fetched data
       setUsersData(response.data);
     } catch (error) {
@@ -268,7 +284,7 @@ const Profile = () => {
     }
   };
   const handleUpdateProfile = () => {
-    fetchUsersData(); // Memanggil fungsi untuk mengambil data terbaru
+    fetchUsersData();
   };
 
   return (
@@ -280,11 +296,17 @@ const Profile = () => {
             source={require('../../assets/images/bg_profile2.jpg')}
             resizeMode="cover">
             <View style={styles.profileImageContainer}>
-              <ImageBackground
-                source={require('../../assets/images/hannan.jpg')}
-                resizeMode="cover"
-                style={styles.profileImage}
-              />
+              <TouchableOpacity onPress={toggleAvatarPicker}>
+                <ImageBackground
+                  source={
+                    selectedAvatar
+                      ? {uri: selectedAvatar}
+                      : require('../../assets/avatar/default.jpg')
+                  }
+                  style={styles.profileImage}
+                  resizeMode="cover"
+                />
+              </TouchableOpacity>
             </View>
             <Text style={styles.profileName}>{username || 'Guest'}</Text>
             <View style={styles.profileInfoContainer}>
@@ -292,6 +314,10 @@ const Profile = () => {
               <Text style={styles.profileInfoHighlight}> | PPM BKI</Text>
             </View>
           </ImageBackground>
+          <BottomSheetAvatar
+            bottomSheetModalRef={bottomSheetModalProfile}
+            handleSelectAvatar={handleSelectAvatar}
+          />
         </View>
         <View style={styles.mainContainer}>
           <View style={styles.statsContainer}>
@@ -418,6 +444,9 @@ const styles = StyleSheet.create({
   },
   profileImage: {
     height: '100%',
+    borderWidth: 5,
+    borderColor: '#fff',
+    backgroundColor: '#fff',
   },
   profileName: {
     marginTop: hp('1%'),

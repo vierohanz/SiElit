@@ -1,14 +1,9 @@
 import * as React from 'react';
-import {
-  View,
-  Image,
-  Text,
-  StatusBar,
-  Dimensions,
-  StyleSheet,
-} from 'react-native';
+import {View, Image, StatusBar, StyleSheet} from 'react-native';
 import {useNavigation, NavigationProp} from '@react-navigation/native';
 import {RootStackParamList} from '../../App';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -21,11 +16,12 @@ import Svg, {
 } from 'react-native-svg';
 
 const Splash = () => {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   React.useEffect(() => {
     const timer = setTimeout(() => {
-      navigation.navigate('Login');
+      navigation.replace('Login'); // Use replace instead of navigate
     }, 3000);
 
     return () => clearTimeout(timer);
@@ -78,4 +74,5 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
 });
+
 export default Splash;

@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  StatusBar,
 } from 'react-native';
 import {Agenda} from 'react-native-calendars';
 
@@ -73,6 +74,11 @@ const Kalender_Akademik: React.FC = () => {
 
   const renderItem = (item: CalendarItem) => (
     <TouchableOpacity style={styles.item}>
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="rgba(0, 0, 0, 0.2)"
+        translucent={true}
+      />
       <View style={styles.itemHeader}>
         <Text style={styles.itemTime}>{item.time}</Text>
         <View style={[styles.itemType, {backgroundColor: item.color}]}>

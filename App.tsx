@@ -19,6 +19,7 @@ import kalender_akademik from './src/pages/settings/kalender_akademik';
 import ipk from './src/pages/settings/ipk';
 import Toast from 'react-native-toast-message';
 
+const Stack = createStackNavigator();
 export type RootStackParamList = {
   Splash: undefined;
   Login: undefined;
@@ -29,8 +30,6 @@ export type RootStackParamList = {
   Gas: undefined;
   ref: undefined;
 };
-
-const Stack = createStackNavigator();
 
 const AppNavigator = () => {
   const {isAuthenticated, isLoading} = useContext(AuthContext);
