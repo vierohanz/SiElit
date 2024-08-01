@@ -22,6 +22,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {ProfileProvider} from '../../profileContext';
 
 export type RootStackParamList = {
   home: undefined;
@@ -103,20 +104,22 @@ const Index = () => {
     }
 
     return (
-      <View style={styles.iconContainer}>
-        <Ionicons
-          name={icon}
-          size={wp('5.8%')}
-          color={routeName === selectedTab ? '#C7D021' : '#fff'}
-        />
-        <Text
-          style={{
-            color: routeName === selectedTab ? '#C7D021' : '#fff',
-            fontSize: wp('3%'),
-          }}>
-          {label}
-        </Text>
-      </View>
+      <ProfileProvider>
+        <View style={styles.iconContainer}>
+          <Ionicons
+            name={icon}
+            size={wp('5.8%')}
+            color={routeName === selectedTab ? '#C7D021' : '#fff'}
+          />
+          <Text
+            style={{
+              color: routeName === selectedTab ? '#C7D021' : '#fff',
+              fontSize: wp('3%'),
+            }}>
+            {label}
+          </Text>
+        </View>
+      </ProfileProvider>
     );
   };
 
@@ -139,60 +142,70 @@ const Index = () => {
   };
 
   return (
-    <CurvedBottomBar.Navigator
-      type="DOWN"
-      style={[styles.bottomBar, {display: isKeyboardVisible ? 'none' : 'flex'}]}
-      shadowStyle={styles.shadow}
-      height={60}
-      circleWidth={57}
-      bgColor="#13A89D"
-      initialRouteName="home"
-      borderTopLeftRight
-      renderCircle={({selectedTab, navigate}) => {
-        const strokeColor = selectedTab === 'target' ? 'yellow' : '#fff';
+    <ProfileProvider>
+      <CurvedBottomBar.Navigator
+        type="DOWN"
+        style={[
+          styles.bottomBar,
+          {display: isKeyboardVisible ? 'none' : 'flex'},
+        ]}
+        shadowStyle={styles.shadow}
+        height={60}
+        circleWidth={57}
+        bgColor="#13A89D"
+        initialRouteName="home"
+        borderTopLeftRight
+        renderCircle={({selectedTab, navigate}) => {
+          const strokeColor = selectedTab === 'target' ? 'yellow' : '#fff';
 
-        return (
-          <Animated.View style={styles.btnCircleUp}>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => navigate('target')}>
-              <Target stroke={strokeColor} fill="none" width={40} height={40} />
-            </TouchableOpacity>
-          </Animated.View>
-        );
-      }}
-      tabBar={renderTabBar}>
-      <CurvedBottomBar.Screen
-        options={{headerShown: false}}
-        name="home"
-        position="LEFT"
-        component={HomePage}
-      />
-      <CurvedBottomBar.Screen
-        options={{headerShown: false}}
-        name="presensi"
-        position="LEFT"
-        component={PresensiPage}
-      />
-      <CurvedBottomBar.Screen
-        options={{headerShown: false}}
-        name="perizinan"
-        position="RIGHT"
-        component={PerizinanPage}
-      />
-      <CurvedBottomBar.Screen
-        options={{headerShown: false}}
-        name="profile"
-        position="RIGHT"
-        component={ProfilePage}
-      />
-      <CurvedBottomBar.Screen
-        options={{headerShown: false}}
-        name="target"
-        position="CENTER"
-        component={TargetPage}
-      />
-    </CurvedBottomBar.Navigator>
+          return (
+            <Animated.View style={styles.btnCircleUp}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => navigate('target')}>
+                <Target
+                  stroke={strokeColor}
+                  fill="none"
+                  width={40}
+                  height={40}
+                />
+              </TouchableOpacity>
+            </Animated.View>
+          );
+        }}
+        tabBar={renderTabBar}>
+        <CurvedBottomBar.Screen
+          options={{headerShown: false}}
+          name="home"
+          position="LEFT"
+          component={HomePage}
+        />
+        <CurvedBottomBar.Screen
+          options={{headerShown: false}}
+          name="presensi"
+          position="LEFT"
+          component={PresensiPage}
+        />
+        <CurvedBottomBar.Screen
+          options={{headerShown: false}}
+          name="perizinan"
+          position="RIGHT"
+          component={PerizinanPage}
+        />
+        <CurvedBottomBar.Screen
+          options={{headerShown: false}}
+          name="profile"
+          position="RIGHT"
+          component={ProfilePage}
+        />
+        <CurvedBottomBar.Screen
+          options={{headerShown: false}}
+          name="target"
+          position="CENTER"
+          component={TargetPage}
+        />
+      </CurvedBottomBar.Navigator>
+    </ProfileProvider>
   );
 };
 
@@ -204,7 +217,7 @@ const styles = StyleSheet.create({
       height: 0,
     },
     shadowOpacity: 1,
-    shadowRadius: 5,
+    shadowRadius: 2,
   },
   button: {
     flex: 1,

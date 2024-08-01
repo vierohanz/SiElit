@@ -73,7 +73,7 @@ const Login = () => {
           password: loginData.password,
         })
         .then(async (res: any) => {
-          console.log('Access Token:', res.data.accessToken);
+          console.log('Access Token:');
           if (res.data.accessToken) {
             await login(res.data.accessToken);
             await AsyncStorage.setItem('accessToken', res.data.accessToken);
@@ -82,7 +82,7 @@ const Login = () => {
             navigation.navigate('Index');
           } else {
             Snackbar.show({
-              text: res.data.msg,
+              text: 'Username atau password anda salah',
               duration: 3000,
               backgroundColor: '#1E1E1E',
               textColor: 'white',

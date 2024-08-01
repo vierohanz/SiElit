@@ -27,6 +27,7 @@ import TableJadwal from '../components/Table';
 import ParallaxCarousel from '../components/paralax';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {useProfile} from '../../profileContext';
 
 const {height, width} = Dimensions.get('window');
 
@@ -131,7 +132,7 @@ const renderItem: ListRenderItem<DataItem> = ({item}) => (
   </LinearGradient>
 );
 const Home: React.FC = () => {
-  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
+  const {selectedAvatar, setSelectedAvatar} = useProfile();
   const [username, setUsername] = useState<string | null>(null);
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const {logout} = useContext(AuthContext);
@@ -147,6 +148,20 @@ const Home: React.FC = () => {
 
     loadUsername();
   }, []);
+  useEffect(() => {
+    const loadAvatar = async () => {
+      try {
+        const storedAvatar = await AsyncStorage.getItem('selectedAvatar');
+        if (storedAvatar) {
+          setSelectedAvatar(storedAvatar);
+        }
+      } catch (error) {
+        console.error('Failed to load avatar from AsyncStorage:', error);
+      }
+    };
+
+    loadAvatar();
+  }, [setSelectedAvatar]);
 
   const truncateToTwoWords = (text: string | null): string => {
     if (!text) return '';
@@ -168,21 +183,9 @@ const Home: React.FC = () => {
   const fontSize =
     formattedText.length > 15 ? styles.smallFontSize : styles.normalFontSize;
 
-  useEffect(() => {
-    const loadAvatar = async () => {
-      try {
-        const storedAvatar = await AsyncStorage.getItem('selectedAvatar');
-        if (storedAvatar) {
-          setSelectedAvatar(storedAvatar);
-        }
-      } catch (error) {
-        console.error('Failed to load avatar from AsyncStorage:', error);
-      }
-    };
-
-    loadAvatar();
-  }, []);
-
+  const handleAvatarPress = () => {
+    navigation.navigate('Index', {screen: 'profile'}); // Ganti dengan nama rute profil Anda
+  };
   return (
     <ScrollView style={styles.container}>
       <StatusBar
@@ -206,17 +209,19 @@ const Home: React.FC = () => {
               </Text>
             </View>
             <View style={styles.profileContainer}>
-              {selectedAvatar ? (
-                <TouchableOpacity>
+              <TouchableOpacity onPress={handleAvatarPress}>
+                {selectedAvatar ? (
                   <Image
                     source={{uri: selectedAvatar}}
                     style={styles.profileImage}
-                    resizeMode="contain"
                   />
-                </TouchableOpacity>
-              ) : (
-                <Text>No avatar selected</Text>
-              )}
+                ) : (
+                  <Image
+                    source={require('../assets/avatar/hcorp.png')}
+                    style={styles.profileImage}
+                  />
+                )}
+              </TouchableOpacity>
             </View>
           </View>
           <ImageBackground
@@ -423,6 +428,7 @@ const styles = StyleSheet.create({
     marginTop: wp('15%'),
   },
   profileImage: {
+    resizeMode: 'contain',
     backgroundColor: '#fff',
     width: wp('15%'),
     height: wp('15%'),

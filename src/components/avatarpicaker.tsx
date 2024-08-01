@@ -30,6 +30,7 @@ const avatars = [
   require('../assets/avatar/Men_6.png'),
   require('../assets/avatar/Men_7.png'),
   require('../assets/avatar/Men_8.png'),
+  // require('../assets/avatar/hcorp.png'),
 
   // Tambahkan avatar lainnya sesuai kebutuhan
 ];
@@ -96,8 +97,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   avatar: {
-    width: 60,
-    height: 60,
+    resizeMode: 'contain',
+    width: wp('20%'),
+    height: hp('8%'),
     borderRadius: 40,
     marginVertical: hp('2%'),
     marginHorizontal: wp('2%'),

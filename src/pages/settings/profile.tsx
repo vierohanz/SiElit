@@ -126,12 +126,12 @@ const initialData: Data = {
 };
 
 const Profile = () => {
+  const {selectedAvatar, setSelectedAvatar} = useProfile();
   const [UsersData, setUsersData] = useState<DataDiri[]>([]);
   const [username, setUsername] = useState<string | null>(null);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [data, setData] = useState<Data>(initialData);
   const [loading, setLoading] = useState(true);
-  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const bottomSheetModalProfile = useRef<BottomSheetModal>(null);
   const bottomSheetModalRef_editProfile = useRef<BottomSheetModal>(null);
@@ -301,10 +301,10 @@ const Profile = () => {
                   source={
                     selectedAvatar
                       ? {uri: selectedAvatar}
-                      : require('../../assets/avatar/default.jpg')
+                      : require('../../assets/avatar/hcorp.png')
                   }
                   style={styles.profileImage}
-                  resizeMode="cover"
+                  resizeMode="contain"
                 />
               </TouchableOpacity>
             </View>
@@ -449,7 +449,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   profileName: {
-    marginTop: hp('1%'),
+    marginTop: hp('2%'),
     fontSize: wp('5.3%'),
     fontFamily: 'Poppins-Bold',
     color: '#fff',

@@ -18,6 +18,7 @@ import index from './src/pages/';
 import kalender_akademik from './src/pages/settings/kalender_akademik';
 import ipk from './src/pages/settings/ipk';
 import Toast from 'react-native-toast-message';
+import {ProfileProvider} from './profileContext';
 
 const Stack = createStackNavigator();
 export type RootStackParamList = {
@@ -50,42 +51,45 @@ const AppNavigator = () => {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName={isAuthenticated ? 'Index' : 'Splash'}>
-        <Stack.Screen
-          options={{headerShown: false}}
-          name="Splash"
-          component={splash}
-        />
-        <Stack.Screen
-          options={{headerShown: false}}
-          name="Login"
-          component={login}
-        />
-        <Stack.Screen
-          options={{headerShown: false}}
-          name="Target"
-          component={target}
-        />
-        <Stack.Screen
-          options={{headerShown: false}}
-          name="Index"
-          component={index}
-        />
-        <Stack.Screen
-          options={{headerShown: false}}
-          name="Kalender_Akademik"
-          component={kalender_akademik}
-        />
+    <ProfileProvider>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName={isAuthenticated ? 'Index' : 'Splash'}>
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="Splash"
+            component={splash}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="Login"
+            component={login}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="Target"
+            component={target}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="Index"
+            component={index}
+          />
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="Kalender_Akademik"
+            component={kalender_akademik}
+          />
 
-        <Stack.Screen
-          options={{headerShown: false}}
-          name="IPK"
-          component={ipk}
-        />
-      </Stack.Navigator>
-      <Toast ref={ref => Toast.setRef(ref as any)} />
-    </NavigationContainer>
+          <Stack.Screen
+            options={{headerShown: false}}
+            name="IPK"
+            component={ipk}
+          />
+        </Stack.Navigator>
+        <Toast ref={ref => Toast.setRef(ref as any)} />
+      </NavigationContainer>
+    </ProfileProvider>
   );
 };
 

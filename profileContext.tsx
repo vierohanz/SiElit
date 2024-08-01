@@ -1,9 +1,8 @@
-// ProfileContext.tsx
-import React, {createContext, useState, ReactNode} from 'react';
+import React, {createContext, useContext, useState, ReactNode} from 'react';
 
 interface ProfileContextType {
-  profileImage: string;
-  setProfileImage: (image: string) => void;
+  selectedAvatar: string | null;
+  setSelectedAvatar: (avatar: string | null) => void;
 }
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
@@ -11,20 +10,18 @@ const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 export const ProfileProvider: React.FC<{children: ReactNode}> = ({
   children,
 }) => {
-  const [profileImage, setProfileImage] = useState<string>(
-    require('../assets/images/profile.jpg'),
-  ); // Gambar default
+  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
 
   return (
-    <ProfileContext.Provider value={{profileImage, setProfileImage}}>
+    <ProfileContext.Provider value={{selectedAvatar, setSelectedAvatar}}>
       {children}
     </ProfileContext.Provider>
   );
 };
 
 export const useProfile = () => {
-  const context = React.useContext(ProfileContext);
-  if (!context) {
+  const context = useContext(ProfileContext);
+  if (context === undefined) {
     throw new Error('useProfile must be used within a ProfileProvider');
   }
   return context;

@@ -8,122 +8,178 @@ import {LinearGradient} from 'react-native-linear-gradient';
 import CardRemain from '../components/CardRemain';
 import CircleChart from '../components/CircleChart';
 import BarChart from '../components/BarChart';
+import appSettings from '../../Appsettings';
+import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+type DataDiri = {
+  id: number;
+  name: string;
+  card_id: string | null;
+  password: string;
+  birth_date: string;
+  grade: string;
+  telephone_number: string | null;
+  role: number;
+  class_type: number;
+  gender: number;
+  nis: string;
+  is_active: number;
+  inactive_reason: string | null;
+  origin: string;
+  residence_in_semarang: string;
+  role_name: string;
+  class_name: string;
+};
 function target() {
-  const [username, setUsername] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [UsersData, setUsersData] = useState<DataDiri[]>([]);
 
   useEffect(() => {
-    const loadUsername = async () => {
+    const fetchUsersData = async () => {
+      const token = await AsyncStorage.getItem('accessToken');
+      console.log('Fetched Token:', token);
+      if (!token) {
+        console.log('No token found');
+        setLoading(false);
+        return;
+      }
+
       try {
-        const storedUsername = await AsyncStorage.getItem('username');
-        if (storedUsername) {
-          const truncatedUsername =
-            storedUsername.length > 28
-              ? storedUsername.substring(0, 28) + '...'
-              : storedUsername;
-          setUsername(truncatedUsername);
-        }
+        const response = await axios.get(`${appSettings.api}/users`, {
+          headers: {Authorization: `Bearer ${token}`},
+        });
+        console.log('Fetched Data:', response.data); // Log fetched data
+        setUsersData(response.data);
       } catch (error) {
-        console.error('Failed to load username from AsyncStorage:', error);
+        console.error('Error fetching Users data:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    loadUsername();
+    fetchUsersData();
   }, []);
+  const fetchUsersData = async () => {
+    const token = await AsyncStorage.getItem('accessToken');
+    console.log('Fetched Token:', token);
+    if (!token) {
+      console.log('No token found');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.get(`${appSettings.api}/users`, {
+        headers: {Authorization: `Bearer ${token}`},
+      });
+      console.log('Fetched Data:', response.data); // Log fetched data
+      setUsersData(response.data);
+    } catch (error) {
+      console.error('Error fetching Users data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <ScrollView style={{flex: 1, backgroundColor: '#fff'}}>
-      <View style={{flex: 1, paddingBottom: hp('15%')}}>
-        <LinearGradient colors={['#13A89D', '#07423E']} style={styles.header} />
-        <Text style={styles.headerText}>{username}</Text>
-        <Text style={styles.subheaderText}>Kelas Lambatan</Text>
-        {/* Target Card */}
-        <View style={styles.cardTarget}>
-          <View style={styles.titleTarget}>
-            <Text style={styles.titleTarget1}>Target </Text>
-            <Text style={[styles.titleTarget1, styles.titleTarget2]}>
-              Kelas
-            </Text>
-          </View>
-          <View style={styles.circleChart}>
-            <CircleChart item={{progress: 60, title: 'Alquran'}} />
-            <View style={styles.line}></View>
-            <CircleChart item={{progress: 93, title: 'Hadist'}} />
-            <View style={styles.line}></View>
-            <CircleChart item={{progress: 71, title: 'Hafalan'}} />
-            <View style={styles.line}></View>
-            <CircleChart item={{progress: 98, title: 'Sikap'}} />
-          </View>
-          <View style={styles.summaryContainer}>
-            <Text style={styles.textStatusProgress}>Status Progress</Text>
-            <View style={styles.summaryRectangle}>
-              <Text style={styles.textSummary}>Cukup Baik</Text>
+      {UsersData.map(user => (
+        <View style={{flex: 1, paddingBottom: hp('15%')}}>
+          <LinearGradient
+            colors={['#13A89D', '#07423E']}
+            style={styles.header}
+          />
+          <Text style={styles.headerText}>{user.name}</Text>
+          <Text style={styles.subheaderText}>Kelas {user.class_name}</Text>
+          {/* Target Card */}
+          <View style={styles.cardTarget}>
+            <View style={styles.titleTarget}>
+              <Text style={styles.titleTarget1}>Target </Text>
+              <Text style={[styles.titleTarget1, styles.titleTarget2]}>
+                Kelas
+              </Text>
+            </View>
+            <View style={styles.circleChart}>
+              <CircleChart item={{progress: 60, title: 'Alquran'}} />
+              <View style={styles.line}></View>
+              <CircleChart item={{progress: 93, title: 'Hadist'}} />
+              <View style={styles.line}></View>
+              <CircleChart item={{progress: 71, title: 'Hafalan'}} />
+              <View style={styles.line}></View>
+              <CircleChart item={{progress: 98, title: 'Sikap'}} />
+            </View>
+            <View style={styles.summaryContainer}>
+              <Text style={styles.textStatusProgress}>Status Progress</Text>
+              <View style={styles.summaryRectangle}>
+                <Text style={styles.textSummary}>Cukup Baik</Text>
+              </View>
             </View>
           </View>
-        </View>
-        {/* Bar Chart */}
-        <View style={styles.cardResult}>
-          <View style={styles.barChart}>
-            <BarChart
+          {/* Bar Chart */}
+          <View style={styles.cardResult}>
+            <View style={styles.barChart}>
+              <BarChart
+                item={{
+                  progress: 89,
+                  title: 'Alquran',
+                  color: '#0A4843',
+                }}></BarChart>
+              <BarChart
+                item={{
+                  progress: 60,
+                  title: 'Hadist',
+                  color: '#0D524D',
+                }}></BarChart>
+              <BarChart
+                item={{
+                  progress: 72,
+                  title: 'Hafalan',
+                  color: '#1F938B',
+                }}></BarChart>
+              <BarChart
+                item={{
+                  progress: 55,
+                  title: 'Kehadiran',
+                  color: '#129087',
+                }}></BarChart>
+              <BarChart
+                item={{
+                  progress: 83,
+                  title: 'Sikap',
+                  color: '#13A89D',
+                }}></BarChart>
+              <BarChart
+                item={{
+                  progress: 58,
+                  title: 'keaktifan',
+                  color: '#14DDCE',
+                }}></BarChart>
+              <BarChart
+                item={{
+                  progress: 30,
+                  title: 'Alpha',
+                  color: '#18F4E3',
+                }}></BarChart>
+            </View>
+          </View>
+          {/* Summary Cards */}
+          <View style={styles.containerRemain}>
+            <CardRemain
               item={{
-                progress: 89,
-                title: 'Alquran',
-                color: '#0A4843',
-              }}></BarChart>
-            <BarChart
+                RemainNumber: 27,
+                indicator: 'Hari',
+                detail:
+                  'Masih ada waktu 25 hari untuk menyelesaikan target anda',
+              }}></CardRemain>
+            <CardRemain
               item={{
-                progress: 60,
-                title: 'Hadist',
-                color: '#0D524D',
-              }}></BarChart>
-            <BarChart
-              item={{
-                progress: 72,
-                title: 'Hafalan',
-                color: '#1F938B',
-              }}></BarChart>
-            <BarChart
-              item={{
-                progress: 55,
-                title: 'Kehadiran',
-                color: '#129087',
-              }}></BarChart>
-            <BarChart
-              item={{
-                progress: 83,
-                title: 'Sikap',
-                color: '#13A89D',
-              }}></BarChart>
-            <BarChart
-              item={{
-                progress: 58,
-                title: 'keaktifan',
-                color: '#14DDCE',
-              }}></BarChart>
-            <BarChart
-              item={{
-                progress: 30,
-                title: 'Alpha',
-                color: '#18F4E3',
-              }}></BarChart>
+                RemainNumber: 90,
+                indicator: 'Persen',
+                detail: 'Akumulasi progress anda akan tercapai 30% lagi',
+              }}></CardRemain>
           </View>
         </View>
-        {/* Summary Cards */}
-        <View style={styles.containerRemain}>
-          <CardRemain
-            item={{
-              RemainNumber: 27,
-              indicator: 'Hari',
-              detail: 'Masih ada waktu 25 hari untuk menyelesaikan target anda',
-            }}></CardRemain>
-          <CardRemain
-            item={{
-              RemainNumber: 90,
-              indicator: 'Persen',
-              detail: 'Akumulasi progress anda akan tercapai 30% lagi',
-            }}></CardRemain>
-        </View>
-      </View>
+      ))}
     </ScrollView>
   );
 }
