@@ -1,9 +1,7 @@
-import * as React from 'react';
+import React, {useContext, useEffect} from 'react';
 import {View, Image, StatusBar, StyleSheet} from 'react-native';
-import {useNavigation, NavigationProp} from '@react-navigation/native';
-import {RootStackParamList} from '../../App';
+import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -14,18 +12,25 @@ import Svg, {
   LinearGradient,
   Stop,
 } from 'react-native-svg';
+import {AuthContext} from '../auth/AuthContext';
+import {RootStackParamList} from '../../App'; // Adjust the import path as needed
 
 const Splash = () => {
+  const {isAuthenticated} = useContext(AuthContext);
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setTimeout(() => {
-      navigation.replace('Login'); // Use replace instead of navigate
-    }, 3000);
+      if (isAuthenticated) {
+        navigation.replace('Index'); // Navigate to Index if authenticated
+      } else {
+        navigation.replace('Login'); // Navigate to Login if not authenticated
+      }
+    }, 3000); // 3 seconds delay for splash screen
 
-    return () => clearTimeout(timer);
-  }, [navigation]);
+    return () => clearTimeout(timer); // Cleanup the timer
+  }, [isAuthenticated, navigation]);
 
   return (
     <View style={styles.container}>
@@ -38,7 +43,7 @@ const Splash = () => {
         source={require('../assets/images/splash.png')}
         style={styles.logo}
       />
-      <Svg height={hp('7%')} width={wp('40%')} style={{}}>
+      <Svg height={hp('7%')} width={wp('40%')}>
         <Defs>
           <LinearGradient id="grad" x1="0" y1="0" x2="0" y2="0.5">
             <Stop offset="0" stopColor="#0C847B" stopOpacity="1" />

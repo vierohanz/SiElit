@@ -53,8 +53,7 @@ const AppNavigator = () => {
   return (
     <ProfileProvider>
       <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName={isAuthenticated ? 'Index' : 'Splash'}>
+        <Stack.Navigator initialRouteName={'Splash'}>
           <Stack.Screen
             options={{headerShown: false}}
             name="Splash"
