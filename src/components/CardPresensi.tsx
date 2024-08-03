@@ -61,6 +61,12 @@ const CardPresensi: React.FC<CardPresensiProps> = ({item}) => {
       ? item.class_name.substring(0, 18) + '..'
       : item.class_name;
 
+  const getLocalTime = () => {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  };
   useEffect(() => {
     setLoading(false);
   }, []);
@@ -110,7 +116,7 @@ const CardPresensi: React.FC<CardPresensiProps> = ({item}) => {
             <Text style={[styles.statusText, {color: statusColor}]}>
               {statusText}
             </Text>
-            <Text style={styles.timeComing}>({formattedTimeAttend})</Text>
+            <Text style={styles.timeComing}>({getLocalTime()})</Text>
           </View>
         </View>
       </View>

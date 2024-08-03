@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useCallback, useEffect, useContext} from 'react';
 import {
   View,
   ListRenderItem,
@@ -11,6 +11,7 @@ import {
   StyleSheet,
   ScrollView,
   FlatList,
+  RefreshControl,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -136,6 +137,7 @@ const Home: React.FC = () => {
   const [username, setUsername] = useState<string | null>(null);
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const {logout} = useContext(AuthContext);
+  const [refreshing, setRefreshing] = useState(false);
   useEffect(() => {
     const loadUsername = async () => {
       try {
@@ -162,6 +164,18 @@ const Home: React.FC = () => {
 
     loadAvatar();
   }, [setSelectedAvatar]);
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      // Your refresh logic here
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate a network request
+      // Re-fetch data or refresh state as needed
+    } catch (error) {
+      console.error('Failed to refresh data:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  }, []);
 
   const truncateToTwoWords = (text: string | null): string => {
     if (!text) return '';
@@ -187,7 +201,15 @@ const Home: React.FC = () => {
     navigation.navigate('Index', {screen: 'profile'}); // Ganti dengan nama rute profil Anda
   };
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          colors={['#13A89D']} // Customize the color of the refresh control spinner
+        />
+      }>
       <StatusBar
         translucent
         backgroundColor="rgba(0,0,0,0.2)" // Adjust color and opacity
@@ -351,13 +373,6 @@ const Home: React.FC = () => {
           />
         </View>
       </View>
-      {/* Notification */}
-      {/* <View style={styles.notificationContainer}>
-        <Text style={styles.notificationTitle}>Notification</Text>
-        {jadwalData.map(item => (
-          <CardNotif key={item.id} item={item} />
-        ))}
-      </View> */}
 
       {/* Jadwal Kelas */}
       <View style={styles.scheduleContainer}>

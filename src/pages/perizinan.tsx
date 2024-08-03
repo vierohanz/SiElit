@@ -26,6 +26,7 @@ import appSettings from '../../Appsettings';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Dropdown} from 'react-native-element-dropdown';
 import Toast from 'react-native-toast-message';
+import {RefreshControl} from 'react-native';
 
 const Perizinan = () => {
   const [class_id, setclass_id] = useState<any>('');
@@ -39,6 +40,7 @@ const Perizinan = () => {
   const [value, setValue] = useState<string | null>(null);
   const [items, setItems] = useState<any[]>([]);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -77,6 +79,11 @@ const Perizinan = () => {
     } finally {
       setLoading(false);
     }
+  };
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchData();
+    setRefreshing(false);
   };
   const resetForm = () => {
     setclass_id('');
@@ -130,6 +137,7 @@ const Perizinan = () => {
         text2: 'Berhasil membuat perizinan',
       });
       resetForm();
+      handleRefresh();
       // navigation.navigate('perizinan');
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -167,7 +175,15 @@ const Perizinan = () => {
   const [isFocused, setIsFocused] = useState(false);
 
   return (
-    <ScrollView style={styles.scrollView}>
+    <ScrollView
+      style={styles.scrollView}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+          colors={['#13A89D']}
+        />
+      }>
       <View style={styles.backgroundView}></View>
       <View style={styles.overlayView}>
         <View style={styles.titleContainer}>
@@ -193,6 +209,7 @@ const Perizinan = () => {
             valueField="value"
             placeholder="Pilih Pengajian"
             searchPlaceholder="Search..."
+            inputSearchStyle={[styles.teks]}
             value={class_id}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}

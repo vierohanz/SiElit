@@ -43,6 +43,11 @@ const EditProfileBottomSheet: React.FC<EditProfileBottomSheetProps> = ({
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const handleTextChange = (text: string) => {
+    // Remove non-numeric characters
+    const numericText = text.replace(/[^0-9]/g, '');
+    setTelepon(numericText);
+  };
   useEffect(() => {
     const fetchToken = async () => {
       const storedToken = await AsyncStorage.getItem('accessToken');
@@ -219,7 +224,8 @@ const EditProfileBottomSheet: React.FC<EditProfileBottomSheetProps> = ({
               <TextInputIzin
                 placeholder="ex : 089065432123"
                 value={telepon}
-                onChangeText={setTelepon}
+                onChangeText={handleTextChange}
+                keyboardType="numeric"
               />
               <Text style={styles.textForm}>Tempat Tinggal</Text>
               <TextInputIzin

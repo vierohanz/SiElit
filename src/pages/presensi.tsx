@@ -17,6 +17,7 @@ import {
 } from 'react-native-responsive-screen';
 import CardPresensi from '../components/CardPresensi'; // Pastikan path ini benar
 import appSettings from '../../Appsettings';
+import {RefreshControl} from 'react-native';
 
 const filterOptions = [
   {id: '1', title: 'Semua'},
@@ -44,6 +45,7 @@ const Presensi: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState<string>('1'); // Default selected filter 'Semua'
   const [searchText, setSearchText] = useState<string>('');
+  const [refreshing, setRefreshing] = useState(false);
 
   // Function to handle filter selection
   const handleFilterSelect = (filterId: string) => {
@@ -84,31 +86,37 @@ const Presensi: React.FC = () => {
     return dateB.getTime() - dateA.getTime(); // Descending order
   });
 
+  const fetchAttendanceData = async () => {
+    const token = await AsyncStorage.getItem('accessToken');
+    console.log('Fetched Token:', token);
+    if (!token) {
+      console.log('No token found');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.get(`${appSettings.api}/attendances/`, {
+        headers: {Authorization: `Bearer ${token}`},
+      });
+      console.log('Fetched Data:', response.data); // Log fetched data
+      setAttendanceData(response.data);
+    } catch (error) {
+      console.error('Error fetching attendance data:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false); // Stop the refreshing animation
+    }
+  };
+
   useEffect(() => {
-    const fetchAttendanceData = async () => {
-      const token = await AsyncStorage.getItem('accessToken');
-      console.log('Fetched Token:', token);
-      if (!token) {
-        console.log('No token found');
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const response = await axios.get(`${appSettings.api}/attendances/`, {
-          headers: {Authorization: `Bearer ${token}`},
-        });
-        console.log('Fetched Data:', response.data); // Log fetched data
-        setAttendanceData(response.data);
-      } catch (error) {
-        console.error('Error fetching attendance data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchAttendanceData();
   }, []);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchAttendanceData();
+  };
 
   if (loading) {
     return (
@@ -119,7 +127,15 @@ const Presensi: React.FC = () => {
   }
 
   return (
-    <ScrollView style={styles.scrollView}>
+    <ScrollView
+      style={styles.scrollView}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          colors={['#13A89D']}
+        />
+      }>
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerText}>Presensi</Text>

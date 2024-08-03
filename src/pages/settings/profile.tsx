@@ -38,6 +38,7 @@ import appSettings from '../../../Appsettings';
 import AvatarPicker from '../../components/avatarpicaker';
 import BottomSheetAvatar from '../../components/BottomSheetAvatar';
 import {useProfile} from '../../../profileContext';
+import {RefreshControl} from 'react-native';
 
 type DataDiri = {
   id: number;
@@ -136,6 +137,8 @@ const Profile = () => {
   const bottomSheetModalProfile = useRef<BottomSheetModal>(null);
   const bottomSheetModalRef_editProfile = useRef<BottomSheetModal>(null);
   const [isAvatarPickerVisible, setAvatarPickerVisible] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
   useEffect(() => {
     const loadUsername = async () => {
       try {
@@ -262,6 +265,7 @@ const Profile = () => {
 
     fetchUsersData();
   }, []);
+
   const fetchUsersData = async () => {
     const token = await AsyncStorage.getItem('accessToken');
     console.log('Fetched Token:', token);
@@ -281,15 +285,31 @@ const Profile = () => {
       console.error('Error fetching Users data:', error);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
+  const onRefresh = async () => {
+    setRefreshing(true); // Start refreshing
+    await fetchUsersData();
+  };
+  useEffect(() => {
+    fetchUsersData();
+  }, []);
   const handleUpdateProfile = () => {
     fetchUsersData();
   };
 
   return (
     <BottomSheetModalProvider>
-      <ScrollView style={styles.scrollView}>
+      <ScrollView
+        style={styles.scrollView}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#13A89D']}
+          />
+        }>
         <View style={styles.headerContainer}>
           <ImageBackground
             style={styles.headerBackground}
