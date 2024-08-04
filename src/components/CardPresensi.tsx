@@ -1,13 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, ActivityIndicator} from 'react-native';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import {formatDate} from './DateUtils';
 
 type PresensiItem = {
   user_id: number;
@@ -31,6 +28,7 @@ type CardPresensiProps = {
 
 const CardPresensi: React.FC<CardPresensiProps> = ({item}) => {
   const [loading, setLoading] = useState(true);
+
   const [date, time] = item.start_date.split('T');
   const [date2, time2] = item.end_date.split('T');
   const [date3, time3] = item.attend_at ? item.attend_at.split('T') : ['', ''];
@@ -41,32 +39,90 @@ const CardPresensi: React.FC<CardPresensiProps> = ({item}) => {
   const dayName = dayNames[dateObject.getDay()];
 
   // Format tanggal dalam format 'DD MMMM YYYY'
-  const formattedDate = formatDate(date);
+  const formatDate = (dateStr: string) => {
+    const dateObj = new Date(dateStr);
+    return dateObj.toLocaleDateString('id-ID', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    });
+  };
 
   // Format waktu untuk menampilkan jam dan menit
-  const formattedTimeEnd = time2
-    ? time2.split(':')[0] + ':' + time2.split(':')[1]
-    : '';
+  const formatTime = (time: string) => {
+    const [hour, minute] = time.split(':');
+    return `${hour}:${minute}`;
+  };
 
-  const formattedTimeStart = time
-    ? time.split(':')[0] + ':' + time.split(':')[1]
-    : '';
+  // Format waktu attend_at
+  const formatAttendTime = (attend_at: string | null) => {
+    if (!attend_at) return '';
+    const date = new Date(attend_at);
+    return date.toLocaleString('id-ID', {
+      // day: '2-digit',
+      // month: 'long',
+      // year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
+  };
+  const formatTimeStart = (start_date: string | null) => {
+    if (!start_date) return '';
+    const date = new Date(start_date);
+    return date.toLocaleString('id-ID', {
+      // day: '2-digit',
+      // month: 'long',
+      // year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
+  };
+  const formatTimeEnd = (end_date: string | null) => {
+    if (!end_date) return '';
+    const date = new Date(end_date);
+    return date.toLocaleString('id-ID', {
+      // day: '2-digit',
+      // month: 'long',
+      // year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
+  };
+  const formatDateTime = (start_date: string | null) => {
+    if (!start_date) return '';
 
-  const formattedTimeAttend = time3
-    ? time3.split(':')[0] + ':' + time3.split(':')[1]
-    : '';
+    const date = new Date(start_date);
+    const dayMap: {[key: number]: string} = {
+      0: 'Min',
+      1: 'Seb',
+      2: 'Sel',
+      3: 'Rab',
+      4: 'Kam',
+      5: 'Jum',
+      6: 'Sab',
+    };
+
+    const day = dayMap[date.getDay()];
+    const dayOfMonth = date.toLocaleString('id-ID', {
+      day: '2-digit',
+    });
+
+    return `${day}`;
+  };
+
+  const formattedTimeStart = formatTimeStart(item.start_date);
+  const formattedTimeEnd = formatTimeEnd(item.end_date);
+  const formattedTimeAttend = formatAttendTime(item.attend_at);
+  const formattedDateTime = formatDateTime(item.start_date);
 
   const truncatedClassName =
     item.class_name.length > 18
       ? item.class_name.substring(0, 18) + '..'
       : item.class_name;
 
-  const getLocalTime = () => {
-    const now = new Date();
-    const hours = now.getHours().toString().padStart(2, '0');
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    return `${hours}:${minutes}`;
-  };
   useEffect(() => {
     setLoading(false);
   }, []);
@@ -87,10 +143,10 @@ const CardPresensi: React.FC<CardPresensiProps> = ({item}) => {
       statusColor = '#2DCF2A'; // Green
       break;
     case 'izin':
-      statusColor = '#0047FF'; // Yellow
+      statusColor = '#0047FF'; // Blue
       break;
     case 'terlambat':
-      statusColor = '#FFD700'; // Red
+      statusColor = '#FFD700'; // Yellow
       break;
     default:
       statusColor = '#FF0000'; // Red for unknown status
@@ -100,8 +156,8 @@ const CardPresensi: React.FC<CardPresensiProps> = ({item}) => {
     <View style={styles.cardContainer}>
       <View style={styles.innerContainer}>
         <View style={styles.timeContainer}>
-          <Text style={styles.dayText}>{dayName} </Text>
-          <Text style={styles.timeText}>{formattedTimeStart} </Text>
+          <Text style={styles.dayText}>{formattedDateTime}</Text>
+          <Text style={styles.timeText}>{formattedTimeStart}</Text>
         </View>
         <View style={styles.separator}></View>
         <View style={styles.detailsContainer}>
@@ -116,12 +172,12 @@ const CardPresensi: React.FC<CardPresensiProps> = ({item}) => {
             <Text style={[styles.statusText, {color: statusColor}]}>
               {statusText}
             </Text>
-            <Text style={styles.timeComing}>({getLocalTime()})</Text>
+            <Text style={styles.timeComing}>({formattedTimeAttend})</Text>
           </View>
         </View>
       </View>
       <View>
-        <Text style={styles.dateText}>{formattedDate}</Text>
+        <Text style={styles.dateText}>{formatDate(item.start_date)}</Text>
       </View>
     </View>
   );

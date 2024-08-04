@@ -114,22 +114,74 @@ const CardIzin: React.FC<CardIzinProps> = ({item, isLast}) => {
   }
 
   const getCurrentDayAbbreviation = () => {
-    const dayAbbreviations = ['MING', 'SEN', 'SEL', 'RAB', 'KAM', 'JUM', 'SAB'];
+    const dayAbbreviations = ['MIN', 'SEN', 'SEL', 'RAB', 'KAM', 'JUM', 'SAB'];
     const currentDate = new Date();
     const dayIndex = currentDate.getDay();
     return dayAbbreviations[dayIndex];
   };
 
-  const getLocalTime = () => {
-    const now = new Date();
-    const hours = now.getHours().toString().padStart(2, '0');
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    return `${hours}:${minutes}`;
+  const formatTimeStart = (start_date: string | null) => {
+    if (!start_date) return '';
+    const date = new Date(start_date);
+    return date.toLocaleString('id-ID', {
+      // day: '2-digit',
+      // month: 'long',
+      // year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
+  };
+  const formatDate = (start_date: string | null) => {
+    if (!start_date) return '';
+
+    const date = new Date(start_date);
+    const monthMap: {[key: number]: string} = {
+      0: 'Jan',
+      1: 'Feb',
+      2: 'Mar',
+      3: 'Apr',
+      4: 'Mei',
+      5: 'Jun',
+      6: 'Jul',
+      7: 'Agu',
+      8: 'Sep',
+      9: 'Okt',
+      10: 'Nov',
+      11: 'Des',
+    };
+
+    const day = date.toLocaleString('id-ID', {day: '2-digit'});
+    const month = monthMap[date.getMonth()];
+    const year = date.toLocaleString('id-ID', {year: 'numeric'});
+
+    return `${day} ${month} ${year}`;
+  };
+  const formatDateTime = (start_date: string | null) => {
+    if (!start_date) return '';
+
+    const date = new Date(start_date);
+    const dayMap: {[key: number]: string} = {
+      0: 'Min',
+      1: 'Seb',
+      2: 'Sel',
+      3: 'Rab',
+      4: 'Kam',
+      5: 'Jum',
+      6: 'Sab',
+    };
+
+    const day = dayMap[date.getDay()];
+    const dayOfMonth = date.toLocaleString('id-ID', {
+      day: '2-digit',
+    });
+
+    return `${day}`;
   };
 
-  const formattedTimeStart = time
-    ? time.split(':')[0] + ':' + time.split(':')[1]
-    : '';
+  const formattedDateTime = formatDateTime(item.start_date);
+  const formattedTimeStart = formatTimeStart(item.start_date);
+  const formattedDate = formatDate(item.start_date);
 
   useEffect(() => {
     fetchData();
@@ -148,8 +200,8 @@ const CardIzin: React.FC<CardIzinProps> = ({item, isLast}) => {
         <>
           <View style={styles.innerContainer}>
             <View style={styles.timeContainer}>
-              <Text style={styles.dayText}>{getCurrentDayAbbreviation()}</Text>
-              <Text style={styles.timeText}>{getLocalTime()}</Text>
+              <Text style={styles.dayText}>{formattedDateTime}</Text>
+              <Text style={styles.timeText}>{formattedTimeStart}</Text>
             </View>
             <View style={styles.separator}></View>
             <View style={styles.detailsContainer}>
@@ -164,7 +216,7 @@ const CardIzin: React.FC<CardIzinProps> = ({item, isLast}) => {
                   {capitalizeFirstLetter(truncateToTwoWords(item.name))} |{' '}
                 </Text>
                 <Text numberOfLines={1} style={styles.dateText}>
-                  {formatDates(item.start_date)}
+                  {formattedDate}
                 </Text>
               </View>
               <View style={styles.statusContainer}>

@@ -193,12 +193,11 @@ const Home: React.FC = () => {
     truncateToTwoWords(username) || 'Guest',
   );
 
-  // Menentukan ukuran font berdasarkan panjang teks
   const fontSize =
     formattedText.length > 15 ? styles.smallFontSize : styles.normalFontSize;
 
   const handleAvatarPress = () => {
-    navigation.navigate('Index', {screen: 'profile'}); // Ganti dengan nama rute profil Anda
+    navigation.navigate('Index', {screen: 'profile'});
   };
   return (
     <ScrollView
@@ -207,7 +206,7 @@ const Home: React.FC = () => {
         <RefreshControl
           refreshing={refreshing}
           onRefresh={onRefresh}
-          colors={['#13A89D']} // Customize the color of the refresh control spinner
+          colors={['#13A89D']}
         />
       }>
       <StatusBar
