@@ -97,7 +97,7 @@ const CardPresensi: React.FC<CardPresensiProps> = ({item}) => {
     const date = new Date(start_date);
     const dayMap: {[key: number]: string} = {
       0: 'Min',
-      1: 'Seb',
+      1: 'Sen',
       2: 'Sel',
       3: 'Rab',
       4: 'Kam',
