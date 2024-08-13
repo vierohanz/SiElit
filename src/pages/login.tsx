@@ -1,4 +1,5 @@
 import React, {useState, useContext} from 'react';
+import {CommonActions} from '@react-navigation/native';
 import {
   View,
   Text,
@@ -79,7 +80,12 @@ const Login = () => {
             await AsyncStorage.setItem('accessToken', res.data.accessToken);
             await AsyncStorage.setItem('username', loginData.name);
 
-            navigation.navigate('Index');
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{name: 'Index'}], // Change 'Index' to 'Home' if that's the name of your home screen
+              }),
+            );
           } else {
             Snackbar.show({
               text: 'Username atau password anda salah',

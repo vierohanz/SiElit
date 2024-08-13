@@ -23,6 +23,7 @@ import {
 } from 'react-native-responsive-screen';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {ProfileProvider} from '../../profileContext';
+import KafarohBottomSheet from '../components/KafarohBottomSheet';
 
 export type RootStackParamList = {
   home: undefined;

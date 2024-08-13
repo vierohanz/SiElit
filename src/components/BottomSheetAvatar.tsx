@@ -35,7 +35,7 @@ const BottomSheetAvatar: React.FC<BottomSheetAvatarProps> = ({
       <BottomSheetModal
         ref={bottomSheetModalRef}
         index={1}
-        snapPoints={['25%', '50%', '70%']}
+        snapPoints={['25%', '50%', '80%']}
         backdropComponent={props => (
           <BottomSheetBackdrop
             {...props}

@@ -27,6 +27,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import {Dropdown} from 'react-native-element-dropdown';
 import Toast from 'react-native-toast-message';
 import {RefreshControl} from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
 
 const Perizinan = () => {
   const [class_id, setclass_id] = useState<any>('');
@@ -45,6 +46,12 @@ const Perizinan = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      return () => resetForm();
+    }, []),
+  );
 
   const fetchData = async () => {
     try {

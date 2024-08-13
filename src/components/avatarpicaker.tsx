@@ -1,13 +1,18 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
   View,
   Text,
   Image,
   StyleSheet,
   TouchableOpacity,
-  FlatList,
+  ScrollView,
+  Alert,
 } from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
+import {
+  launchCamera,
+  launchImageLibrary,
+  ImagePickerResponse,
+} from 'react-native-image-picker';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -30,14 +35,54 @@ const avatars = [
   require('../assets/avatar/Men_6.png'),
   require('../assets/avatar/Men_7.png'),
   require('../assets/avatar/Men_8.png'),
-  // require('../assets/avatar/hcorp.png'),
-
-  // Tambahkan avatar lainnya sesuai kebutuhan
 ];
+
 type AvatarPickerProps = {
   onSelectAvatar: (avatar: string) => void;
 };
+
 const AvatarPicker: React.FC<AvatarPickerProps> = ({onSelectAvatar}) => {
+  const handleSelectFromCamera = () => {
+    launchCamera(
+      {
+        mediaType: 'photo',
+        saveToPhotos: true,
+      },
+      (response: ImagePickerResponse) => {
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.errorCode) {
+          console.log('ImagePicker Error: ', response.errorMessage);
+        } else if (response.assets && response.assets.length > 0) {
+          const {uri} = response.assets[0];
+          if (uri) {
+            onSelectAvatar(uri);
+          }
+        }
+      },
+    );
+  };
+
+  const handleSelectFromGallery = () => {
+    launchImageLibrary(
+      {
+        mediaType: 'photo',
+      },
+      (response: ImagePickerResponse) => {
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.errorCode) {
+          console.log('ImagePicker Error: ', response.errorMessage);
+        } else if (response.assets && response.assets.length > 0) {
+          const {uri} = response.assets[0];
+          if (uri) {
+            onSelectAvatar(uri);
+          }
+        }
+      },
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -57,6 +102,40 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({onSelectAvatar}) => {
               <Image source={avatar} style={styles.avatar} />
             </TouchableOpacity>
           ))}
+          <View
+            style={{
+              width: wp('90%'),
+              flexDirection: 'row',
+              marginVertical: hp('0.1%'),
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+            <View
+              style={{
+                height: hp('0.2%'),
+                width: wp('39%'),
+                backgroundColor: '#B8B8B8',
+              }}></View>
+            <Text
+              style={{
+                fontFamily: 'Poppins-SemiBold',
+                color: '#B8B8B8',
+                fontSize: wp('4%'),
+              }}>
+              Or
+            </Text>
+            <View
+              style={{
+                height: hp('0.2%'),
+                width: wp('39%'),
+                backgroundColor: '#B8B8B8',
+              }}></View>
+          </View>
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={handleSelectFromGallery}>
+            <Text style={styles.addButtonText}>Select Gallery</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>
@@ -103,6 +182,19 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     marginVertical: hp('2%'),
     marginHorizontal: wp('2%'),
+  },
+  addButton: {
+    marginVertical: hp('2%'),
+    paddingHorizontal: wp('4%'),
+    paddingVertical: hp('1.5%'),
+    backgroundColor: '#13A89D',
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  addButtonText: {
+    color: '#fff',
+    fontSize: wp('4%'),
+    fontFamily: 'Poppins-Regular',
   },
 });
 

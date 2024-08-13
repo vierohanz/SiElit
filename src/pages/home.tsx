@@ -1,4 +1,5 @@
 import React, {useState, useCallback, useEffect, useContext} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
 import {
   View,
   ListRenderItem,
@@ -13,6 +14,13 @@ import {
   FlatList,
   RefreshControl,
 } from 'react-native';
+import {BackHandler} from 'react-native';
+import {
+  ALERT_TYPE,
+  Dialog,
+  AlertNotificationRoot,
+  Toast,
+} from 'react-native-alert-notification';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
@@ -199,6 +207,36 @@ const Home: React.FC = () => {
   const handleAvatarPress = () => {
     navigation.navigate('Index', {screen: 'profile'});
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      const backAction = () => {
+        console.log('Back button pressed');
+        Dialog.show({
+          type: ALERT_TYPE.WARNING,
+          title: 'Confirm Exit',
+          textBody: 'Are you sure you want to exit?',
+          button: 'Yes',
+          onPressButton: () => {
+            console.log('Yes button pressed');
+            Dialog.hide(); // Ensure the dialog is hidden before exiting
+            setTimeout(() => {
+              console.log('Exiting app');
+              BackHandler.exitApp(); // Exit the app
+            }, 0); // Use 0 or a short duration
+          },
+        });
+        return true; // Prevent the default back action
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        backAction,
+      );
+
+      return () => backHandler.remove(); // Clean up the event listener
+    }, []),
+  );
   return (
     <ScrollView
       style={styles.container}
@@ -442,7 +480,7 @@ const styles = StyleSheet.create({
     marginTop: wp('15%'),
   },
   profileImage: {
-    resizeMode: 'contain',
+    resizeMode: 'cover',
     backgroundColor: '#fff',
     width: wp('15%'),
     height: wp('15%'),

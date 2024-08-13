@@ -1,4 +1,10 @@
-import React, {useContext, useRef, useState, useEffect} from 'react';
+import React, {
+  useContext,
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+} from 'react';
 import {NavigationProp} from '@react-navigation/native';
 import * as Keychain from 'react-native-keychain';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,6 +14,7 @@ import {RootStackParamList} from '../../../App';
 import {AuthContext} from '../../auth/AuthContext';
 import Toast from 'react-native-toast-message';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {useFocusEffect} from '@react-navigation/native';
 import {
   View,
   Text,
@@ -299,6 +306,18 @@ const Profile = () => {
     fetchUsersData();
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      // Close bottom sheet when screen loses focus
+      return () => {
+        bottomSheetModalRef.current?.close();
+        bottomSheetModalRef_editProfile.current?.close();
+        bottomSheetModalProfile.current?.close();
+        setAvatarPickerVisible(false);
+      };
+    }, []),
+  );
+
   return (
     <BottomSheetModalProvider>
       <ScrollView
@@ -324,7 +343,7 @@ const Profile = () => {
                       : require('../../assets/avatar/hcorp.png')
                   }
                   style={styles.profileImage}
-                  resizeMode="contain"
+                  resizeMode="cover"
                 />
               </TouchableOpacity>
             </View>
@@ -459,13 +478,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
     borderRadius: 70,
     overflow: 'hidden',
-    borderWidth: 2,
+    borderWidth: 3,
     borderColor: '#fff',
   },
   profileImage: {
     height: '100%',
-    borderWidth: 5,
-    borderColor: '#fff',
+    // borderWidth: 5,
+    // borderColor: '#fff',
     backgroundColor: '#fff',
   },
   profileName: {

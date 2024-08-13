@@ -15,14 +15,9 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import CardPresensi from '../components/CardPresensi'; // Pastikan path ini benar
+import CardPresensi from '../components/CardPresensi';
 import appSettings from '../../Appsettings';
 import {RefreshControl} from 'react-native';
-
-const filterOptions = [
-  {id: '1', title: 'Semua'},
-  {id: '2', title: 'Hari Ini'},
-];
 
 type PresensiItem = {
   user_id: number;
@@ -40,10 +35,16 @@ type PresensiItem = {
   lastEditBy: string;
 };
 
+const filterOptions = [
+  {id: '1', title: 'Semua'},
+  {id: '2', title: 'Hari Ini'},
+  {id: '3', title: 'Kemarin'},
+];
+
 const Presensi: React.FC = () => {
   const [attendanceData, setAttendanceData] = useState<PresensiItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedFilter, setSelectedFilter] = useState<string>('1'); // Default selected filter 'Semua'
+  const [selectedFilter, setSelectedFilter] = useState<string>('1');
   const [searchText, setSearchText] = useState<string>('');
   const [refreshing, setRefreshing] = useState(false);
 
@@ -70,12 +71,31 @@ const Presensi: React.FC = () => {
     );
   }
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('id-ID', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+  };
+
   if (selectedFilter === '2') {
-    // Filter for 'Hari Ini' (e.g., based on date)
-    const today = new Date().toISOString().split('T')[0];
+    // Filter untuk 'Hari Ini'
+    const today = new Date();
+    const todayDateString = formatDate(today.toISOString());
+
     filteredData = filteredData.filter(
-      item =>
-        item.start_date.startsWith(today) || item.end_date.startsWith(today),
+      item => formatDate(item.start_date) === todayDateString,
+    );
+  } else if (selectedFilter === '3') {
+    // Filter untuk 'Kemarin'
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1); // Set ke sehari sebelumnya
+    const yesterdayDateString = formatDate(yesterday.toISOString());
+
+    filteredData = filteredData.filter(
+      item => formatDate(item.start_date) === yesterdayDateString,
     );
   }
 
@@ -142,26 +162,31 @@ const Presensi: React.FC = () => {
           <Searching onSearch={handleSearch} />
         </View>
 
-        <View style={styles.filterContainer}>
-          {filterOptions.map(filter => (
+        {/* Horizontal Filter List */}
+        <FlatList
+          data={filterOptions}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          renderItem={({item}) => (
             <TouchableOpacity
-              key={filter.id}
+              key={item.id}
               style={[
                 styles.filterButton,
-                selectedFilter === filter.id && styles.selectedFilterButton,
+                selectedFilter === item.id && styles.selectedFilterButton,
               ]}
-              onPress={() => handleFilterSelect(filter.id)}>
+              onPress={() => handleFilterSelect(item.id)}>
               <Text
                 style={[
                   styles.filterButtonText,
-                  selectedFilter === filter.id &&
-                    styles.selectedFilterButtonText,
+                  selectedFilter === item.id && styles.selectedFilterButtonText,
                 ]}>
-                {filter.title}
+                {item.title}
               </Text>
             </TouchableOpacity>
-          ))}
-        </View>
+          )}
+          keyExtractor={item => item.id}
+          contentContainerStyle={styles.filterContainer}
+        />
 
         <FlatList
           data={filteredData}
