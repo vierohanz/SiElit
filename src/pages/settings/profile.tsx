@@ -318,6 +318,7 @@ const Profile = () => {
     }, []),
   );
 
+  const resizeMode = selectedAvatar ? 'cover' : 'contain';
   return (
     <BottomSheetModalProvider>
       <ScrollView
@@ -332,8 +333,7 @@ const Profile = () => {
         <View style={styles.headerContainer}>
           <ImageBackground
             style={styles.headerBackground}
-            source={require('../../assets/images/bg_profile2.jpg')}
-            resizeMode="cover">
+            source={require('../../assets/images/bg_profile2.jpg')}>
             <View style={styles.profileImageContainer}>
               <TouchableOpacity onPress={toggleAvatarPicker}>
                 <ImageBackground
@@ -343,7 +343,7 @@ const Profile = () => {
                       : require('../../assets/avatar/hcorp.png')
                   }
                   style={styles.profileImage}
-                  resizeMode="cover"
+                  resizeMode={resizeMode}
                 />
               </TouchableOpacity>
             </View>
@@ -482,7 +482,10 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
   },
   profileImage: {
+    justifyContent: 'center',
+    alignItems: 'center',
     height: '100%',
+    resizeMode: 'cover',
     // borderWidth: 5,
     // borderColor: '#fff',
     backgroundColor: '#fff',
