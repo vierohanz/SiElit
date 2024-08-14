@@ -33,6 +33,7 @@ const Login = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const {login} = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
 
   const [loginData, setLoginData] = useState({
     name: '',
@@ -74,8 +75,9 @@ const Login = () => {
           password: loginData.password,
         })
         .then(async (res: any) => {
-          console.log('Access Token:');
+          console.log('Access Token:', res.data.accessToken);
           if (res.data.accessToken) {
+            setAccessToken(res.data.accessToken);
             await login(res.data.accessToken);
             await AsyncStorage.setItem('accessToken', res.data.accessToken);
             await AsyncStorage.setItem('username', loginData.name);

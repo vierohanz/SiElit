@@ -108,7 +108,7 @@ const KafarohBottomSheet: React.FC<KafarohBottomSheetProps> = ({
       <BottomSheetModal
         ref={bottomSheetModalRef}
         index={1}
-        snapPoints={['25%', '50%', '70%']}
+        snapPoints={['50%', '70%']}
         backdropComponent={props => (
           <BottomSheetBackdrop
             {...props}

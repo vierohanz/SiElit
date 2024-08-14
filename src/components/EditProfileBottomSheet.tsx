@@ -197,7 +197,7 @@ const EditProfileBottomSheet: React.FC<EditProfileBottomSheetProps> = ({
       <BottomSheetModal
         ref={bottomSheetModalRef}
         index={1}
-        snapPoints={['25%', '50%', '80%']}
+        snapPoints={['70%', '85%']}
         backdropComponent={props => (
           <BottomSheetBackdrop
             {...props}
