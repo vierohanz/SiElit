@@ -237,6 +237,7 @@ const Home: React.FC = () => {
       return () => backHandler.remove(); // Clean up the event listener
     }, []),
   );
+  const resizeMode = selectedAvatar ? 'cover' : 'contain';
   return (
     <ScrollView
       style={styles.container}
@@ -273,11 +274,13 @@ const Home: React.FC = () => {
                   <Image
                     source={{uri: selectedAvatar}}
                     style={styles.profileImage}
+                    resizeMode={resizeMode}
                   />
                 ) : (
                   <Image
                     source={require('../assets/avatar/hcorp.png')}
                     style={styles.profileImage}
+                    resizeMode={resizeMode}
                   />
                 )}
               </TouchableOpacity>
@@ -480,7 +483,6 @@ const styles = StyleSheet.create({
     marginTop: wp('15%'),
   },
   profileImage: {
-    resizeMode: 'cover',
     backgroundColor: '#fff',
     width: wp('15%'),
     height: wp('15%'),
