@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "497555235662",
+    "project_id": "sielit-1be8e",
+    "storage_bucket": "sielit-1be8e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:497555235662:android:505b2455ec3795783bb41f",
+        "android_client_info": {
+          "package_name": "com.sielit"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9t3nncwhg-kPtZKUl9nPXX4ic0Qp71l0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
