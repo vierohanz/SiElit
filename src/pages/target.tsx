@@ -190,6 +190,7 @@ const styles = StyleSheet.create({
     height: hp('30%'),
   },
   headerText: {
+    textTransform: 'uppercase',
     fontFamily: 'Poppins-SemiBold',
     fontSize: wp('4.5%'),
     color: '#C7D021',

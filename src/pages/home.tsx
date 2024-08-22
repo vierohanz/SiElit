@@ -36,7 +36,7 @@ import TableJadwal from '../components/Table';
 import ParallaxCarousel from '../components/paralax';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useProfile} from '../../profileContext';
+import {useProfile} from '../context/profileContext';
 
 const {height, width} = Dimensions.get('window');
 
@@ -211,22 +211,8 @@ const Home: React.FC = () => {
   useFocusEffect(
     useCallback(() => {
       const backAction = () => {
-        console.log('Back button pressed');
-        Dialog.show({
-          type: ALERT_TYPE.WARNING,
-          title: 'Confirm Exit',
-          textBody: 'Are you sure you want to exit?',
-          button: 'Yes',
-          onPressButton: () => {
-            console.log('Yes button pressed');
-            Dialog.hide(); // Ensure the dialog is hidden before exiting
-            setTimeout(() => {
-              console.log('Exiting app');
-              BackHandler.exitApp(); // Exit the app
-            }, 0); // Use 0 or a short duration
-          },
-        });
-        return true; // Prevent the default back action
+        // Tidak melakukan apa-apa saat tombol kembali ditekan
+        return true;
       };
 
       const backHandler = BackHandler.addEventListener(
@@ -234,7 +220,7 @@ const Home: React.FC = () => {
         backAction,
       );
 
-      return () => backHandler.remove(); // Clean up the event listener
+      return () => backHandler.remove();
     }, []),
   );
   const resizeMode = selectedAvatar ? 'cover' : 'contain';

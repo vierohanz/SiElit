@@ -5,6 +5,12 @@ import React, {
   useEffect,
   useCallback,
 } from 'react';
+import {
+  ALERT_TYPE,
+  Dialog,
+  AlertNotificationRoot,
+} from 'react-native-alert-notification';
+import {StatusBar} from 'react-native';
 import {NavigationProp} from '@react-navigation/native';
 import * as Keychain from 'react-native-keychain';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -44,7 +50,7 @@ import EditProfileBottomSheet from '../../components/EditProfileBottomSheet';
 import appSettings from '../../../Appsettings';
 import AvatarPicker from '../../components/avatarpicaker';
 import BottomSheetAvatar from '../../components/BottomSheetAvatar';
-import {useProfile} from '../../../profileContext';
+import {useProfile} from '../../context/profileContext';
 import {RefreshControl} from 'react-native';
 
 type DataDiri = {
@@ -187,19 +193,40 @@ const Profile = () => {
   const handlePresentModalPress = () => {
     bottomSheetModalRef.current?.present();
   };
-  const handleSignOut = async () => {
-    try {
-      // Hapus token dari Keychain
-      await Keychain.resetGenericPassword();
 
-      // Navigasi ke layar login
-      navigation.reset({
-        index: 0,
-        routes: [{name: 'Login'}],
-      });
-    } catch (error) {
-      console.error('Error during sign out:', error);
-    }
+  const handleSignOut = async () => {
+    // Mengatur status bar sebelum menampilkan dialog
+    StatusBar.setBarStyle('light-content', true);
+    StatusBar.setBackgroundColor('rgba(0, 0, 0, 0.5)', true);
+    StatusBar.setTranslucent(true);
+
+    // Menampilkan dialog konfirmasi
+    Dialog.show({
+      type: ALERT_TYPE.DANGER,
+      title: 'Confirm Sign Out',
+      textBody: 'Are you sure you want to sign out?',
+      button: 'Yes',
+      onPressButton: async () => {
+        try {
+          console.log('Yes button pressed');
+          Dialog.hide();
+          await Keychain.resetGenericPassword();
+          console.log('Token removed from Keychain');
+
+          navigation.reset({
+            index: 0,
+            routes: [{name: 'Login'}],
+          });
+          console.log('Navigated to Login screen');
+        } catch (error) {
+          console.error('Error during sign out:', error);
+        } finally {
+          StatusBar.setBarStyle('light-content', true);
+          StatusBar.setBackgroundColor('rgba(0, 0, 0, 0.2)', true);
+          StatusBar.setTranslucent(true);
+        }
+      },
+    });
   };
 
   const handlePresentModalPress_editProfile = () => {
@@ -491,6 +518,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   profileName: {
+    textTransform: 'uppercase',
     marginTop: hp('2%'),
     fontSize: wp('5.3%'),
     fontFamily: 'Poppins-Bold',

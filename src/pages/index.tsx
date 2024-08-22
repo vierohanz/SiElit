@@ -22,7 +22,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
-import {ProfileProvider} from '../../profileContext';
+import {ProfileProvider} from '../context/profileContext';
 import KafarohBottomSheet from '../components/KafarohBottomSheet';
 
 export type RootStackParamList = {
