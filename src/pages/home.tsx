@@ -374,7 +374,7 @@ const Home: React.FC = () => {
       </View>
       <View
         style={{
-          height: hp('25%'),
+          height: hp('40%'),
           flexDirection: 'column',
           marginTop: hp('6%'),
         }}>
@@ -401,12 +401,12 @@ const Home: React.FC = () => {
       </View>
 
       {/* Jadwal Kelas */}
-      <View style={styles.scheduleContainer}>
+      {/* <View style={styles.scheduleContainer}>
         <View style={styles.scheduleTitleContainer}>
           <Text style={styles.scheduleTitle}>Jadwal Kelas</Text>
         </View>
         <TableJadwal />
-      </View>
+      </View> */}
     </ScrollView>
   );
 };
@@ -415,6 +415,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    // marginBottom: hp('8.5%'),
   },
   landingContainer: {
     height: height * 0.43,

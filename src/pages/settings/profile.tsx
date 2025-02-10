@@ -237,26 +237,35 @@ const Profile = () => {
     <TouchableOpacity
       style={styles.listItemContainer}
       onPress={() => {
-        if (item.text === 'Kalender Akademik') {
-          navigation.navigate('Kalender_Akademik');
+        if (item.text === 'Edit Data') {
+          bottomSheetModalRef_editProfile.current?.present();
         } else if (item.text === 'Sign Out') {
           handleSignOut();
-        } else if (item.text === 'IPK') {
-          navigation.navigate('IPK');
-        } else if (item.text === 'Edit Data') {
-          bottomSheetModalRef_editProfile.current?.present();
         }
+        // else if (item.text === 'Kalender Akademik') {
+        //   navigation.navigate('Kalender_Akademik');
+        // } else if (item.text === 'IPK') {
+        //   navigation.navigate('IPK');
+        // }
       }}>
       <View style={[styles.listItemIcon, {backgroundColor: item.color}]}>
         <Ionicons name={item.icon} size={wp('7.8%')} color={'#FFFFFF'} />
       </View>
-      <Text
-        style={[
-          styles.listItemText,
-          item.text === 'Sign Out' && styles.boldText,
-        ]}>
-        {item.text}
-      </Text>
+      <View style={styles.textContainer}>
+        <Text
+          style={[
+            styles.listItemText,
+            item.text === 'Sign Out' && styles.boldText, // Gaya tebal untuk Sign Out
+            (item.text === 'IPK' || item.text === 'Kalender Akademik') && {
+              color: '#A9A9A9',
+            }, // Warna abu-abu
+          ]}>
+          {item.text}
+        </Text>
+        {(item.text === 'IPK' || item.text === 'Kalender Akademik') && (
+          <Text style={styles.comingSoonText}>Coming Soon</Text>
+        )}
+      </View>
     </TouchableOpacity>
   );
 
@@ -387,7 +396,22 @@ const Profile = () => {
         </View>
         <View style={styles.mainContainer}>
           <View style={styles.statsContainer}>
-            <View style={styles.statItem}>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  fontSize: 24,
+                  fontWeight: 'bold',
+                  color: '#B3B3B3',
+                }}>
+                Coming Soon
+              </Text>
+            </View>
+            {/* <View style={styles.statItem}>
               <View style={styles.statValueContainer}>
                 <Text style={styles.statPlus}>+</Text>
                 <Text style={styles.statNumber}>70</Text>
@@ -402,7 +426,7 @@ const Profile = () => {
                 <Text style={styles.kafarohValue}>{totalItems}</Text>
               </View>
               <Text style={styles.statLabel}>Kafaroh</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
         <View style={styles.dataContainer}>
@@ -548,7 +572,7 @@ const styles = StyleSheet.create({
   statsContainer: {
     height: hp('8%'),
     width: wp('80%'),
-    backgroundColor: '#fff',
+    backgroundColor: '#DDD',
     borderRadius: 40,
     marginTop: hp('-4%'),
     elevation: 5,
@@ -663,6 +687,17 @@ const styles = StyleSheet.create({
     color: '#FE0000',
   },
   bottomSheet: {},
+  comingSoonText: {
+    fontSize: wp('3.1%'),
+    color: '#B3B3B3',
+    fontWeight: '700',
+  },
+  textContainer: {
+    flex: 1, // Mengisi ruang tersisa
+    flexDirection: 'row',
+    justifyContent: 'space-between', // Membuat jarak antar elemen
+    alignItems: 'center', // Vertikal rata tengah
+  },
 });
 
 export default Profile;

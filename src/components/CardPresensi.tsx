@@ -29,8 +29,8 @@ type CardPresensiProps = {
 const CardPresensi: React.FC<CardPresensiProps> = ({item}) => {
   const [loading, setLoading] = useState(true);
 
-  const [date, time] = item.start_date.split('T');
-  const [date2, time2] = item.end_date.split('T');
+  const [date, time] = item.start_date ? item.start_date.split('T') : ['', ''];
+  const [date2, time2] = item.end_date ? item.end_date.split('T') : ['', ''];
   const [date3, time3] = item.attend_at ? item.attend_at.split('T') : ['', ''];
 
   // Format tanggal untuk mendapatkan nama hari dengan maksimal 3 karakter
@@ -119,9 +119,9 @@ const CardPresensi: React.FC<CardPresensiProps> = ({item}) => {
   const formattedDateTime = formatDateTime(item.start_date);
 
   const truncatedClassName =
-    item.class_name.length > 18
+    item.class_name && item.class_name.length > 18
       ? item.class_name.substring(0, 18) + '..'
-      : item.class_name;
+      : item.class_name || 'Tidak ada nama kelas';
 
   useEffect(() => {
     setLoading(false);

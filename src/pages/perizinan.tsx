@@ -258,13 +258,19 @@ const Perizinan = () => {
         {loading ? (
           <ActivityIndicator size="large" color="#13A89D" />
         ) : (
-          data.map((item, index) => (
-            <CardIzin
-              key={item.id}
-              item={item}
-              isLast={index === data.length - 1}
-            />
-          ))
+          data
+            .sort(
+              (a, b) =>
+                new Date(b.created_at).getTime() -
+                new Date(a.created_at).getTime(),
+            ) // Urutkan berdasarkan tanggal terbaru
+            .map((item, index) => (
+              <CardIzin
+                key={item.id}
+                item={item}
+                isLast={index === data.length - 1}
+              />
+            ))
         )}
       </View>
     </ScrollView>

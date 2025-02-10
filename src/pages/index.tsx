@@ -157,13 +157,14 @@ const Index = () => {
         initialRouteName="home"
         borderTopLeftRight
         renderCircle={({selectedTab, navigate}) => {
-          const strokeColor = selectedTab === 'target' ? 'yellow' : '#fff';
+          const strokeColor = selectedTab === 'target' ? 'yellow' : '#B3B3B3';
 
           return (
             <Animated.View style={styles.btnCircleUp}>
               <TouchableOpacity
                 style={styles.button}
-                onPress={() => navigate('target')}>
+                // onPress={() => navigate('target')}
+              >
                 <Target
                   stroke={strokeColor}
                   fill="none"
@@ -236,7 +237,9 @@ const styles = StyleSheet.create({
     borderRadius: 45,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#13A89D',
+    // backgroundColor: '#13A89D',
+    backgroundColor: '#A9A9A9',
+    color: '#A9A9A9',
     bottom: hp('4%'),
     shadowColor: '#000',
     shadowOffset: {

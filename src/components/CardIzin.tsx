@@ -27,6 +27,8 @@ type CardIzinProps = {
     description: string;
     is_approved: number;
     img_url: string;
+    created_at: string;
+    updated_at: string;
   };
   isLast: boolean;
 };
@@ -38,41 +40,6 @@ const CardIzin: React.FC<CardIzinProps> = ({item, isLast}) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [date, time] = item.start_date.split('T');
   const route = useRoute<RouteProp<RouteParams, 'CardIzin'>>();
-
-  const capitalizeFirstLetter = (text: string): string => {
-    if (!text) return '';
-    return text
-      .toLowerCase()
-      .replace(/\b\w/g, (char: string) => char.toUpperCase());
-  };
-
-  const formatDates = (dateString: string): string => {
-    const date = new Date(dateString);
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'Mei',
-      'Jun',
-      'Jul',
-      'Agu',
-      'Sep',
-      'Okt',
-      'Nov',
-      'Des',
-    ];
-    const day = date.getDate();
-    const month = months[date.getMonth()];
-    const year = date.getFullYear();
-    return `${day} ${month} ${year}`;
-  };
-
-  const truncateToTwoWords = (text: string | null): string => {
-    if (!text) return '';
-    const words = text.split(' ');
-    return words.slice(0, 2).join(' ');
-  };
 
   const fetchData = async () => {
     try {
@@ -179,8 +146,8 @@ const CardIzin: React.FC<CardIzinProps> = ({item, isLast}) => {
     return `${day}`;
   };
 
-  const formattedDateTime = formatDateTime(item.start_date);
-  const formattedTimeStart = formatTimeStart(item.start_date);
+  const formattedDateTime = formatDateTime(item.created_at);
+  const formattedTimeStart = formatTimeStart(item.created_at);
   const formattedDate = formatDate(item.start_date);
 
   useEffect(() => {
@@ -212,9 +179,6 @@ const CardIzin: React.FC<CardIzinProps> = ({item, isLast}) => {
               </View>
               <Text style={styles.class}>{item.class_type}</Text>
               <View style={styles.titleContainer}>
-                <Text style={styles.name} numberOfLines={1}>
-                  {capitalizeFirstLetter(truncateToTwoWords(item.name))} |{' '}
-                </Text>
                 <Text numberOfLines={1} style={styles.dateText}>
                   {formattedDate}
                 </Text>
