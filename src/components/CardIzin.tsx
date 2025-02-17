@@ -38,7 +38,7 @@ type RouteParams = {
 const CardIzin: React.FC<CardIzinProps> = ({item, isLast}) => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [date, time] = item.start_date.split('T');
+  // const [date, time] = item.start_date.split('T');
   const route = useRoute<RouteProp<RouteParams, 'CardIzin'>>();
 
   const fetchData = async () => {

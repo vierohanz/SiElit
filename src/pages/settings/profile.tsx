@@ -5,39 +5,27 @@ import React, {
   useEffect,
   useCallback,
 } from 'react';
-import {
-  ALERT_TYPE,
-  Dialog,
-  AlertNotificationRoot,
-} from 'react-native-alert-notification';
+import {ALERT_TYPE, Dialog} from 'react-native-alert-notification';
 import {StatusBar} from 'react-native';
 import {NavigationProp} from '@react-navigation/native';
 import * as Keychain from 'react-native-keychain';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
-import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../../../App';
-import {AuthContext} from '../../auth/AuthContext';
-import Toast from 'react-native-toast-message';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {useFocusEffect} from '@react-navigation/native';
 import {
   View,
   Text,
-  Image,
   ImageBackground,
   StyleSheet,
   ScrollView,
   FlatList,
   ListRenderItem,
   TouchableOpacity,
-  Button,
-  Modal,
 } from 'react-native';
 import BottomSheet, {
   BottomSheetModal,
   BottomSheetModalProvider,
-  BottomSheetBackdrop,
 } from '@gorhom/bottom-sheet';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
@@ -48,7 +36,6 @@ import axios from 'axios';
 import KafarohBottomSheet from '../../components/KafarohBottomSheet';
 import EditProfileBottomSheet from '../../components/EditProfileBottomSheet';
 import appSettings from '../../../Appsettings';
-import AvatarPicker from '../../components/avatarpicaker';
 import BottomSheetAvatar from '../../components/BottomSheetAvatar';
 import {useProfile} from '../../context/profileContext';
 import {RefreshControl} from 'react-native';
@@ -241,10 +228,10 @@ const Profile = () => {
           bottomSheetModalRef_editProfile.current?.present();
         } else if (item.text === 'Sign Out') {
           handleSignOut();
+        } else if (item.text === 'Kalender Akademik') {
+          navigation.navigate('Kalender_Akademik');
         }
-        // else if (item.text === 'Kalender Akademik') {
-        //   navigation.navigate('Kalender_Akademik');
-        // } else if (item.text === 'IPK') {
+        // else if (item.text === 'IPK') {
         //   navigation.navigate('IPK');
         // }
       }}>
@@ -256,13 +243,13 @@ const Profile = () => {
           style={[
             styles.listItemText,
             item.text === 'Sign Out' && styles.boldText, // Gaya tebal untuk Sign Out
-            (item.text === 'IPK' || item.text === 'Kalender Akademik') && {
+            item.text === 'IPK' && {
               color: '#A9A9A9',
             }, // Warna abu-abu
           ]}>
           {item.text}
         </Text>
-        {(item.text === 'IPK' || item.text === 'Kalender Akademik') && (
+        {item.text === 'IPK' && (
           <Text style={styles.comingSoonText}>Coming Soon</Text>
         )}
       </View>
@@ -418,8 +405,8 @@ const Profile = () => {
                 <Text style={styles.statPercentage}>%</Text>
               </View>
               <Text style={styles.statLabel}>Ketercapaian</Text>
-            </View>
-            <TouchableOpacity
+            </View> */}
+            {/* <TouchableOpacity
               style={styles.statItem2}
               onPress={handlePresentModalPress}>
               <View style={styles.kafarohValueContainer}>
@@ -572,7 +559,7 @@ const styles = StyleSheet.create({
   statsContainer: {
     height: hp('8%'),
     width: wp('80%'),
-    backgroundColor: '#DDD',
+    backgroundColor: '#fff',
     borderRadius: 40,
     marginTop: hp('-4%'),
     elevation: 5,
@@ -627,10 +614,12 @@ const styles = StyleSheet.create({
   },
   kafarohValueContainer: {
     display: 'flex',
+
     backgroundColor: '#D2EEEC',
     paddingHorizontal: 12,
-    paddingVertical: 3,
+    paddingVertical: 2,
     borderRadius: 5,
+    marginTop: hp('0.6%'),
     marginBottom: hp('0.4%'),
   },
   kafarohValue: {

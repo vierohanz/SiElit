@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import axios from 'axios';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
   SafeAreaView,
@@ -9,6 +10,7 @@ import {
   StatusBar,
 } from 'react-native';
 import {Agenda} from 'react-native-calendars';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {
   widthPercentageToDP as wp,
@@ -16,11 +18,12 @@ import {
 } from 'react-native-responsive-screen';
 import {useNavigation, NavigationProp} from '@react-navigation/native';
 import {RootStackParamList} from '../../../App';
+import appSettings from '../../../Appsettings';
 
 interface CalendarItem {
   time: string;
   title: string;
-  location: string;
+  location: string | null;
   type: string;
   color: string;
 }
@@ -31,46 +34,37 @@ interface CalendarItems {
 
 const Kalender_Akademik: React.FC = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const items: CalendarItems = {
-    '2024-07-10': [
-      {
-        time: '05:00AM - 06:15AM',
-        title: 'OSAKA',
-        location: 'GSG',
-        type: 'PS',
-        color: '#FB958F',
-      },
-      {
-        time: '15:30PM - 17:15PM',
-        title: 'Games',
-        location: 'GSG',
-        type: 'PS',
-        color: '#A890FE',
-      },
-    ],
-    '2024-07-09': [
-      {
-        time: '19:00PM - 21:15PM',
-        title: 'CAI',
-        location: 'GSG',
-        type: 'PM',
-        color: '#B9E4C9',
-      },
-    ],
-    '2024-07-07': [
-      {
-        time: '05:00AM - 06:15AM',
-        title: 'Pengajian Subuh',
-        location: 'GSG',
-        type: 'PS',
-        color: '#61C0BF',
-      },
-    ],
-    '2024-07-11': [],
-    '2024-07-12': [],
-    '2024-07-13': [],
-    '2024-07-14': [],
-  };
+  const [items, setItems] = useState<CalendarItems>({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCalendarItems = async () => {
+      try {
+        const token = await AsyncStorage.getItem('accessToken');
+        if (!token) {
+          console.error('Access token not found');
+          setLoading(false);
+          return;
+        }
+
+        const response = await axios.get(`${appSettings.api}/calendars`, {
+          headers: {Authorization: `Bearer ${token}`},
+        });
+
+        if (response.data && response.data.data) {
+          setItems(response.data.data);
+        } else {
+          console.error('Invalid data format from API');
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCalendarItems();
+  }, []);
 
   const renderItem = (item: CalendarItem) => (
     <TouchableOpacity style={styles.item}>
@@ -86,9 +80,19 @@ const Kalender_Akademik: React.FC = () => {
         </View>
       </View>
       <Text style={styles.itemTitle}>{item.title}</Text>
-      <Text style={styles.itemLocation}>Tempat: {item.location}</Text>
+      {item.location && (
+        <Text style={styles.itemLocation}>Tempat: {item.location}</Text>
+      )}
     </TouchableOpacity>
   );
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={{textAlign: 'center', marginTop: 20}}>Loading...</Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -130,7 +134,7 @@ const Kalender_Akademik: React.FC = () => {
       <Agenda
         items={items}
         renderItem={renderItem}
-        selected={'2024-07-10'}
+        selected={'2024-12-01'}
         theme={{
           agendaDayTextColor: '#000',
           agendaDayNumColor: '#000',

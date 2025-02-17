@@ -4,7 +4,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  Alert,
   ActivityIndicator,
 } from 'react-native';
 import {
@@ -23,7 +22,6 @@ import CardIzin from '../components/CardIzin';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import appSettings from '../../Appsettings';
-import DropDownPicker from 'react-native-dropdown-picker';
 import {Dropdown} from 'react-native-element-dropdown';
 import Toast from 'react-native-toast-message';
 import {RefreshControl} from 'react-native';
@@ -36,13 +34,13 @@ const Perizinan = () => {
   const [data, setData] = useState<any[]>([]);
   const [kelasOptions, setKelasOptions] = useState<any[]>([]);
   const [selectedKelas, setSelectedKelas] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState<string | null>(null);
   const [items, setItems] = useState<any[]>([]);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [refreshing, setRefreshing] = useState(false);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   useEffect(() => {
     fetchData();
   }, []);
@@ -127,7 +125,7 @@ const Perizinan = () => {
           text2: 'Token tidak ditemukan. Tolong login lagi.',
         });
       }
-
+      setLoading(true);
       const response = await axios.post(
         `${appSettings.api}/permits`,
         formData,
@@ -138,6 +136,7 @@ const Perizinan = () => {
           },
         },
       );
+      // setLoading(true);
       Toast.show({
         type: 'success',
         text1: 'success',
@@ -162,6 +161,7 @@ const Perizinan = () => {
           text2: 'Terjadi kesalahan saat mengirim data.',
         });
       }
+      setLoading(false);
     }
   };
 
@@ -251,7 +251,7 @@ const Perizinan = () => {
             </View>
           </View>
         </View>
-        <ButtonIzin title="Submit" onPress={handleIzin} />
+        <ButtonIzin title="Submit" onPress={handleIzin} disabled={loading} />
       </View>
       <View style={styles.riwayatContainer}>
         <Text style={styles.riwayatText}>Riwayat</Text>

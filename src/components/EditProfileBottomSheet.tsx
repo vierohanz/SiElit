@@ -1,19 +1,11 @@
 import React, {useState, useRef, useEffect} from 'react';
 import TextInputIzin from './TextInputIzin';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  TextInput,
-} from 'react-native';
+import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import axios from 'axios';
 import BottomSheet, {
   BottomSheetModal,
   BottomSheetBackdrop,
 } from '@gorhom/bottom-sheet';
-import {useWindowDimensions} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,

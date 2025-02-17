@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
 import {
-  Alert,
   Animated,
   StyleSheet,
   Dimensions,
@@ -21,9 +20,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {ProfileProvider} from '../context/profileContext';
-import KafarohBottomSheet from '../components/KafarohBottomSheet';
 
 export type RootStackParamList = {
   home: undefined;

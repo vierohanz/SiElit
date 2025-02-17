@@ -29,15 +29,6 @@ type CardPresensiProps = {
 const CardPresensi: React.FC<CardPresensiProps> = ({item}) => {
   const [loading, setLoading] = useState(true);
 
-  const [date, time] = item.start_date ? item.start_date.split('T') : ['', ''];
-  const [date2, time2] = item.end_date ? item.end_date.split('T') : ['', ''];
-  const [date3, time3] = item.attend_at ? item.attend_at.split('T') : ['', ''];
-
-  // Format tanggal untuk mendapatkan nama hari dengan maksimal 3 karakter
-  const dateObject = new Date(date);
-  const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
-  const dayName = dayNames[dateObject.getDay()];
-
   // Format tanggal dalam format 'DD MMMM YYYY'
   const formatDate = (dateStr: string) => {
     const dateObj = new Date(dateStr);
@@ -49,10 +40,6 @@ const CardPresensi: React.FC<CardPresensiProps> = ({item}) => {
   };
 
   // Format waktu untuk menampilkan jam dan menit
-  const formatTime = (time: string) => {
-    const [hour, minute] = time.split(':');
-    return `${hour}:${minute}`;
-  };
 
   // Format waktu attend_at
   const formatAttendTime = (attend_at: string | null) => {
@@ -106,9 +93,6 @@ const CardPresensi: React.FC<CardPresensiProps> = ({item}) => {
     };
 
     const day = dayMap[date.getDay()];
-    const dayOfMonth = date.toLocaleString('id-ID', {
-      day: '2-digit',
-    });
 
     return `${day}`;
   };

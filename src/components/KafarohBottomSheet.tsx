@@ -2,7 +2,6 @@ import React, {useState, useRef, useEffect} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Animated} from 'react-native';
 import BottomSheet, {
   BottomSheetModal,
-  BottomSheetModalProvider,
   BottomSheetBackdrop,
 } from '@gorhom/bottom-sheet';
 import {useWindowDimensions} from 'react-native';

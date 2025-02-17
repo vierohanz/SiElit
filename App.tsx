@@ -1,7 +1,6 @@
 import React, {useEffect, useState, useContext} from 'react';
 import {ActivityIndicator, PermissionsAndroid, Linking} from 'react-native';
 import messaging from '@react-native-firebase/messaging';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {NavigationContainer, LinkingOptions} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {AuthContext, AuthProvider} from './src/auth/AuthContext';

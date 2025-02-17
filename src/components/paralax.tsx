@@ -15,7 +15,7 @@ interface Entry {
 const entries: Entry[] = [
   {illustration: require('../assets/images/pekanolga.png')},
   {illustration: require('../assets/images/desainkelas.png')},
-  {illustration: require('../assets/images/corousel_3.jpg')},
+  {illustration: require('../assets/images/psb.png')},
 ];
 
 const Parallax: React.FC = () => {

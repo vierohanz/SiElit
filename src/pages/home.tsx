@@ -15,12 +15,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import {BackHandler} from 'react-native';
-import {
-  ALERT_TYPE,
-  Dialog,
-  AlertNotificationRoot,
-  Toast,
-} from 'react-native-alert-notification';
+
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
@@ -31,32 +26,12 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import CardNotif from '../components/CardNotif';
-import TableJadwal from '../components/Table';
 import ParallaxCarousel from '../components/paralax';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useProfile} from '../context/profileContext';
 
 const {height, width} = Dimensions.get('window');
 
-// Data jadwal contoh
-const jadwalData = [
-  {
-    id: '1',
-    day: 'Senin',
-    time: '08:00',
-    title: 'Materi Pembelajaran',
-    timeRange: '08:00 - 10:00 WIB',
-  },
-  {
-    id: '2',
-    day: 'Selasa',
-    time: '10:00',
-    title: 'Rapat Tim',
-    timeRange: '10:00 - 12:00 WIB',
-  },
-];
 type DataItem = {
   id: string;
   gradient: string[];
@@ -187,7 +162,7 @@ const Home: React.FC = () => {
 
   const truncateToTwoWords = (text: string | null): string => {
     if (!text) return '';
-    const words = text.split(' ');
+    const words = text ? text.split(' ') : [];
     return words.slice(0, 2).join(' ');
   };
   const capitalizeFirstLetter = (text: string): string => {

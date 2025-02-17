@@ -1,7 +1,5 @@
 import React from 'react';
-import {PanGestureHandler, State} from 'react-native-gesture-handler';
-import {useNavigation} from '@react-navigation/native';
-import {View, Text, StyleSheet, Animated, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
   widthPercentageToDP as wp,

@@ -17,7 +17,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-
+import ImagePicker from 'react-native-image-crop-picker';
 const avatars = [
   require('../assets/avatar/Woman_1.png'),
   require('../assets/avatar/Woman_2.png'),
@@ -64,23 +64,19 @@ const AvatarPicker: React.FC<AvatarPickerProps> = ({onSelectAvatar}) => {
   };
 
   const handleSelectFromGallery = () => {
-    launchImageLibrary(
-      {
-        mediaType: 'photo',
-      },
-      (response: ImagePickerResponse) => {
-        if (response.didCancel) {
-          console.log('User cancelled image picker');
-        } else if (response.errorCode) {
-          console.log('ImagePicker Error: ', response.errorMessage);
-        } else if (response.assets && response.assets.length > 0) {
-          const {uri} = response.assets[0];
-          if (uri) {
-            onSelectAvatar(uri);
-          }
-        }
-      },
-    );
+    ImagePicker.openPicker({
+      width: 300, // Lebar gambar hasil crop
+      height: 300, // Tinggi gambar hasil crop
+      cropping: true, // Aktifkan cropping (scaling & zooming)
+      cropperCircleOverlay: false, // Jika ingin bentuk persegi
+      freeStyleCropEnabled: true, // Aktifkan fitur scaling & zooming manual
+    })
+      .then(image => {
+        onSelectAvatar(image.path);
+      })
+      .catch(error => {
+        console.log('Image selection error: ', error);
+      });
   };
 
   return (
