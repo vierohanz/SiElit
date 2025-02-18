@@ -15,7 +15,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import {BackHandler} from 'react-native';
-
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
@@ -29,9 +29,19 @@ import {
 import ParallaxCarousel from '../components/paralax';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useProfile} from '../context/profileContext';
+import {green} from 'react-native-reanimated/lib/typescript/Colors';
+import appSettings from '../../Appsettings';
+import axios from 'axios';
 
 const {height, width} = Dimensions.get('window');
 
+type jadwalUpcoming = {
+  id: number;
+  name: string;
+  location: string;
+  start_date: string;
+  end_date: string;
+};
 type DataItem = {
   id: string;
   gradient: string[];
@@ -117,11 +127,37 @@ const renderItem: ListRenderItem<DataItem> = ({item}) => (
 );
 const Home: React.FC = () => {
   const {selectedAvatar, setSelectedAvatar} = useProfile();
+  const [jadwalUpcoming, setjadwalUpcoming] = useState<jadwalUpcoming[]>([]);
   const [username, setUsername] = useState<string | null>(null);
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const {logout} = useContext(AuthContext);
+  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  const fetchJadwalUpcoming = async () => {
+    const token = await AsyncStorage.getItem('accessToken');
+    console.log('Fetched Token:', token);
+    if (!token) {
+      console.log('No token found');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.get(`${appSettings.api}/classes/upcoming`, {
+        headers: {Authorization: `Bearer ${token}`},
+      });
+      console.log('Fetched Data:', response.data); // Log fetched data
+      setjadwalUpcoming(response.data);
+    } catch (error) {
+      console.error('Error fetching attendance data:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
   useEffect(() => {
+    fetchJadwalUpcoming();
     const loadUsername = async () => {
       try {
         const storedUsername = await AsyncStorage.getItem('username');
@@ -146,9 +182,11 @@ const Home: React.FC = () => {
     };
 
     loadAvatar();
+    fetchJadwalUpcoming();
   }, [setSelectedAvatar]);
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
+    fetchJadwalUpcoming();
     try {
       // Your refresh logic here
       await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate a network request
@@ -199,6 +237,22 @@ const Home: React.FC = () => {
     }, []),
   );
   const resizeMode = selectedAvatar ? 'cover' : 'contain';
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('id-ID', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
+  };
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const hours = date.getHours().toString().padStart(2, '0'); // Tambahkan leading zero jika perlu
+    const minutes = date.getMinutes().toString().padStart(2, '0'); // Tambahkan leading zero jika perlu
+    return `${hours}:${minutes} WIB`;
+  };
+
   return (
     <ScrollView
       style={styles.container}
@@ -334,7 +388,11 @@ const Home: React.FC = () => {
         </View>
       </View>
 
-      <View style={{height: hp('28%'), width: wp('100%')}}>
+      <View
+        style={{
+          height: hp('28%'),
+          width: wp('100%'),
+        }}>
         <Text
           style={{
             fontFamily: 'Poppins-Bold',
@@ -342,6 +400,7 @@ const Home: React.FC = () => {
             fontSize: wp('4.7%'),
             marginLeft: wp('4%'),
             marginTop: hp('1.5%'),
+            marginBottom: hp('1%'),
           }}>
           Coming soon
         </Text>
@@ -349,9 +408,189 @@ const Home: React.FC = () => {
       </View>
       <View
         style={{
+          flexDirection: 'column',
+          marginTop: hp('7%'),
+        }}>
+        <Text
+          style={{
+            fontFamily: 'Poppins-Bold',
+            color: '#000',
+            fontSize: wp('4.7%'),
+            marginLeft: wp('4%'),
+            marginTop: hp('1.5%'),
+            marginBottom: hp('1%'),
+          }}>
+          Jadwal pengajian
+        </Text>
+        <FlatList
+          data={jadwalUpcoming}
+          keyExtractor={item => item.id.toString()}
+          renderItem={({item}) => (
+            <View
+              style={{
+                marginHorizontal: wp('4%'),
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginBottom: 15,
+                height: hp('13%'),
+                backgroundColor: '#fff',
+                borderRadius: 16,
+                borderWidth: 1,
+                borderColor: '#E3E3E3',
+                shadowColor: '#000',
+                shadowOffset: {width: 0, height: 4},
+                shadowOpacity: 0.1,
+                shadowRadius: 6,
+                elevation: 6,
+              }}>
+              {/* Sidebar Warna dengan Gradient */}
+              <LinearGradient
+                colors={['#4CAF50', '#13A89D']}
+                style={{
+                  width: wp('6%'),
+                  height: '100%',
+                  borderTopLeftRadius: 16,
+                  borderBottomLeftRadius: 16,
+                }}
+              />
+
+              <View style={{marginLeft: wp('4%')}}>
+                <Text
+                  style={{
+                    fontSize: wp('4.5%'),
+                    fontWeight: '600',
+                    color: '#000',
+                  }}>
+                  {item.name}
+                </Text>
+
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginTop: hp('0.8%'),
+                  }}>
+                  <Icon name="calendar" size={wp('4%')} color="#666" />
+                  <Text
+                    style={{
+                      fontSize: wp('3.5%'),
+                      color: '#666',
+                      marginLeft: wp('1%'),
+                    }}>
+                    {formatDate(item.start_date)}
+                  </Text>
+                  <Icon
+                    name="clock-outline"
+                    size={wp('4%')}
+                    color="#666"
+                    style={{marginLeft: wp('3%')}}
+                  />
+                  <Text
+                    style={{
+                      fontSize: wp('3.5%'),
+                      color: '#666',
+                      marginLeft: wp('1%'),
+                    }}>
+                    {formatTime(item.start_date)}
+                  </Text>
+                </View>
+
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginTop: hp('0.5%'),
+                  }}>
+                  <Icon name="map-marker" size={wp('4%')} color="#666" />
+                  <Text
+                    style={{
+                      fontSize: wp('3%'),
+                      color: '#666',
+                      marginLeft: wp('1%'),
+                    }}>
+                    {item.location}
+                  </Text>
+                </View>
+              </View>
+            </View>
+          )}
+        />
+        {/* <View
+          style={{
+            marginHorizontal: wp('4%'),
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginBottom: 15,
+            height: hp('12%'),
+            backgroundColor: '#fff',
+            borderRadius: 16,
+            borderWidth: 1,
+            borderColor: '#E3E3E3',
+            shadowColor: '#000',
+            shadowOffset: {width: 0, height: 4},
+            shadowOpacity: 0.1,
+            shadowRadius: 6,
+            elevation: 6,
+          }}>
+          <LinearGradient
+            colors={['#4CAF50', '#13A89D']}
+            style={{
+              width: wp('6%'),
+              height: hp('12%'),
+              borderTopLeftRadius: 16,
+              borderBottomLeftRadius: 16,
+            }}
+          />
+
+          <View style={{marginLeft: wp('4%')}}>
+            <Text
+              style={{
+                fontSize: wp('4.5%'),
+                fontWeight: '600',
+                color: '#000',
+              }}>
+              PENGAJIAN DAERAH
+            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: hp('0.8%'),
+              }}>
+              <Icon name="calendar" size={wp('4%')} color="#666" />
+              <Text
+                style={{
+                  fontSize: wp('3.5%'),
+                  color: '#666',
+                  marginLeft: wp('1%'),
+                }}>
+                20 Februari 2025
+              </Text>
+
+              <Icon
+                name="clock-outline"
+                size={wp('4%')}
+                color="#666"
+                style={{marginLeft: wp('3%')}}
+              />
+              <Text
+                style={{
+                  fontSize: wp('3.5%'),
+                  color: '#666',
+                  marginLeft: wp('1%'),
+                }}>
+                19:00 WIB
+              </Text>
+            </View>
+          </View>
+        </View> */}
+      </View>
+
+      <View
+        style={{
           height: hp('40%'),
           flexDirection: 'column',
-          marginTop: hp('6%'),
+          marginTop: hp('2%'),
         }}>
         <Text
           style={{
@@ -374,14 +613,6 @@ const Home: React.FC = () => {
           />
         </View>
       </View>
-
-      {/* Jadwal Kelas */}
-      {/* <View style={styles.scheduleContainer}>
-        <View style={styles.scheduleTitleContainer}>
-          <Text style={styles.scheduleTitle}>Jadwal Kelas</Text>
-        </View>
-        <TableJadwal />
-      </View> */}
     </ScrollView>
   );
 };

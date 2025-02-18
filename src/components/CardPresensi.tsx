@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 15,
-    height: hp('12%'),
+    height: hp('13%'),
     backgroundColor: '#fff',
     borderRadius: 16,
     borderColor: '#E3E3E3',
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    height: hp('12%'),
+    height: hp('13%'),
   },
   timeContainer: {
     height: '100%',
@@ -213,13 +213,14 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     marginLeft: wp('2%'),
+    marginTop: hp('1%'),
   },
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   titleText: {
-    fontSize: wp('4.1%'),
+    fontSize: wp('3.7%'),
     fontWeight: 'bold',
     color: '#000',
     marginLeft: wp('2%'),
@@ -243,7 +244,7 @@ const styles = StyleSheet.create({
   },
   dateText: {
     fontWeight: '400',
-    fontSize: wp('3.2%'),
+    fontSize: wp('3%'),
     color: '#B8B8B8',
     marginTop: wp('1%'),
     marginRight: wp('4%'),
