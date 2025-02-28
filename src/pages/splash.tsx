@@ -40,26 +40,9 @@ const Splash = () => {
         translucent={true}
       />
       <Image
-        source={require('../assets/images/splash.png')}
+        source={require('../assets/images/versi_2.png')}
         style={styles.logo}
       />
-      <Svg height={hp('7%')} width={wp('40%')}>
-        <Defs>
-          <LinearGradient id="grad" x1="0" y1="0" x2="0" y2="0.5">
-            <Stop offset="0" stopColor="#0C847B" stopOpacity="1" />
-            <Stop offset="1" stopColor="#07423E" stopOpacity="1" />
-          </LinearGradient>
-        </Defs>
-        <SvgText
-          fill="url(#grad)"
-          fontSize={wp('8%')}
-          fontWeight="900"
-          x="50%"
-          y="50%"
-          textAnchor="middle">
-          SIELIT
-        </SvgText>
-      </Svg>
     </View>
   );
 };
@@ -71,11 +54,11 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#13A89D',
+    backgroundColor: '#fff',
   },
   logo: {
-    width: wp('45%'),
-    height: wp('45%'),
+    width: wp('75%'),
+    height: wp('75%'),
     resizeMode: 'contain',
   },
 });

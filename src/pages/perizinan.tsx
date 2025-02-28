@@ -102,7 +102,7 @@ const Perizinan = () => {
       Toast.show({
         type: 'error',
         text1: 'Error',
-        text2: 'Tolong inputkan semua form',
+        text2: 'Please input all the forms',
       });
       return;
     }

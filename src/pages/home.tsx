@@ -382,7 +382,7 @@ const Home: React.FC = () => {
                 color: '#13A89D',
                 fontSize: wp('6%'),
               }}>
-              150
+              165
             </Text>
           </View>
         </View>
@@ -411,17 +411,20 @@ const Home: React.FC = () => {
           flexDirection: 'column',
           marginTop: hp('7%'),
         }}>
-        <Text
-          style={{
-            fontFamily: 'Poppins-Bold',
-            color: '#000',
-            fontSize: wp('4.7%'),
-            marginLeft: wp('4%'),
-            marginTop: hp('1.5%'),
-            marginBottom: hp('1%'),
-          }}>
-          Jadwal pengajian
-        </Text>
+        {jadwalUpcoming && jadwalUpcoming.length > 0 && (
+          <Text
+            style={{
+              fontFamily: 'Poppins-Bold',
+              color: '#000',
+              fontSize: wp('4.7%'),
+              marginLeft: wp('4%'),
+              marginTop: hp('1.5%'),
+              marginBottom: hp('1%'),
+            }}>
+            Jadwal pengajian
+          </Text>
+        )}
+
         <FlatList
           data={jadwalUpcoming}
           keyExtractor={item => item.id.toString()}
@@ -515,75 +518,6 @@ const Home: React.FC = () => {
             </View>
           )}
         />
-        {/* <View
-          style={{
-            marginHorizontal: wp('4%'),
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginBottom: 15,
-            height: hp('12%'),
-            backgroundColor: '#fff',
-            borderRadius: 16,
-            borderWidth: 1,
-            borderColor: '#E3E3E3',
-            shadowColor: '#000',
-            shadowOffset: {width: 0, height: 4},
-            shadowOpacity: 0.1,
-            shadowRadius: 6,
-            elevation: 6,
-          }}>
-          <LinearGradient
-            colors={['#4CAF50', '#13A89D']}
-            style={{
-              width: wp('6%'),
-              height: hp('12%'),
-              borderTopLeftRadius: 16,
-              borderBottomLeftRadius: 16,
-            }}
-          />
-
-          <View style={{marginLeft: wp('4%')}}>
-            <Text
-              style={{
-                fontSize: wp('4.5%'),
-                fontWeight: '600',
-                color: '#000',
-              }}>
-              PENGAJIAN DAERAH
-            </Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: hp('0.8%'),
-              }}>
-              <Icon name="calendar" size={wp('4%')} color="#666" />
-              <Text
-                style={{
-                  fontSize: wp('3.5%'),
-                  color: '#666',
-                  marginLeft: wp('1%'),
-                }}>
-                20 Februari 2025
-              </Text>
-
-              <Icon
-                name="clock-outline"
-                size={wp('4%')}
-                color="#666"
-                style={{marginLeft: wp('3%')}}
-              />
-              <Text
-                style={{
-                  fontSize: wp('3.5%'),
-                  color: '#666',
-                  marginLeft: wp('1%'),
-                }}>
-                19:00 WIB
-              </Text>
-            </View>
-          </View>
-        </View> */}
       </View>
 
       <View
@@ -607,7 +541,9 @@ const Home: React.FC = () => {
             data={data}
             renderItem={renderItem}
             keyExtractor={item => item.id}
-            horizontal
+            horizontal={true}
+            alwaysBounceHorizontal
+            bounces={true}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.list}
           />
@@ -731,6 +667,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   list: {
+    paddingEnd: 10,
     justifyContent: 'space-around',
   },
   item: {

@@ -531,6 +531,8 @@ const styles = StyleSheet.create({
   profileName: {
     textTransform: 'uppercase',
     marginTop: hp('2%'),
+    textAlign: 'center',
+    marginHorizontal: wp('4%'),
     fontSize: wp('5.3%'),
     fontFamily: 'Poppins-Bold',
     color: '#fff',

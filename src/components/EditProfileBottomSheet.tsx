@@ -12,6 +12,7 @@ import {
 } from 'react-native-responsive-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
+import Sound from 'react-native-sound';
 import ButtonIzin from './ButtonIzin';
 import appSettings from '../../Appsettings';
 
@@ -36,10 +37,10 @@ const EditProfileBottomSheet: React.FC<EditProfileBottomSheetProps> = ({
   const [loading, setLoading] = useState(true);
 
   const handleTextChange = (text: string) => {
-    // Remove non-numeric characters
     const numericText = text.replace(/[^0-9]/g, '');
     setTelepon(numericText);
   };
+
   useEffect(() => {
     const fetchToken = async () => {
       const storedToken = await AsyncStorage.getItem('accessToken');
@@ -65,12 +66,10 @@ const EditProfileBottomSheet: React.FC<EditProfileBottomSheetProps> = ({
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log('API response:', response.data);
       const userData = response.data[0];
       const {telephone_number, residence_in_semarang} = userData;
       setTelepon(telephone_number);
       setAlamat(residence_in_semarang);
-
       setLoading(false);
     } catch (error) {
       Toast.show({
@@ -80,6 +79,16 @@ const EditProfileBottomSheet: React.FC<EditProfileBottomSheetProps> = ({
       });
       setLoading(false);
     }
+  };
+
+  const playSuccessSound = () => {
+    const sound = new Sound('success.mp3', Sound.MAIN_BUNDLE, error => {
+      if (error) {
+        console.log('Failed to load sound', error);
+        return;
+      }
+      sound.play();
+    });
   };
 
   const handleSubmit = async () => {
@@ -114,7 +123,7 @@ const EditProfileBottomSheet: React.FC<EditProfileBottomSheetProps> = ({
     }
 
     try {
-      await axios.put(
+      const response = await axios.put(
         `${appSettings.api}/users`,
         {
           telephone_number: telepon,
@@ -128,33 +137,44 @@ const EditProfileBottomSheet: React.FC<EditProfileBottomSheetProps> = ({
           },
         },
       );
-      Toast.show({
-        type: 'success',
-        text1: 'Success',
-        text2: 'Update berhasil',
-      });
-      setPassword('');
-      setPasswordNew('');
-      setPasswordNewConfirm('');
-      handlePresentModalPress();
-      onUpdate();
-      bottomSheetModalRef.current?.close();
+
+      if (response.status === 200 && response.data.msg === 'user updated') {
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: response.data.msg || 'Update berhasil',
+        });
+        playSuccessSound();
+        setPassword('');
+        setPasswordNew('');
+        setPasswordNewConfirm('');
+        handlePresentModalPress();
+        onUpdate();
+        bottomSheetModalRef.current?.close();
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Update failed',
+          text2: response.data.msg || 'Gagal memperbarui data.',
+        });
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2:
+              error.response.data.msg ||
+              'Terjadi kesalahan saat memperbarui data.',
+          });
+
           if (error.response.status === 401) {
             await AsyncStorage.removeItem('accessToken');
             Toast.show({
               type: 'error',
               text1: 'Error',
               text2: 'Session expired. Please log in again.',
-            });
-          } else {
-            Toast.show({
-              type: 'error',
-              text1: 'Update failed',
-              text2: 'Telepon, alamat, and old password are required',
-              visibilityTime: 3000,
             });
           }
         } else if (error.request) {
@@ -179,10 +199,6 @@ const EditProfileBottomSheet: React.FC<EditProfileBottomSheetProps> = ({
       }
     }
   };
-
-  if (loading) {
-    return <Text>Loading...</Text>; // Or a loading spinner
-  }
 
   return (
     <View style={{flex: 1}}>

@@ -46,17 +46,17 @@ const Login = () => {
   const handleLogin = async () => {
     if (!loginData.name || !loginData.password) {
       if (!loginData.name)
-        setLoginData(prev => ({...prev, nameErr: 'tidak boleh kosong'}));
+        setLoginData(prev => ({...prev, nameErr: 'Cannot be empty'}));
       Snackbar.show({
-        text: 'Data tidak boleh kosong.',
+        text: 'Data cannot be empty.',
         duration: 3000,
         backgroundColor: '#1E1E1E',
         textColor: 'white',
       });
       if (!loginData.password)
-        setLoginData(prev => ({...prev, passwordErr: 'tidak boleh kosong'}));
+        setLoginData(prev => ({...prev, passwordErr: 'Cannot be empty'}));
       Snackbar.show({
-        text: 'Data tidak boleh kosong.',
+        text: 'Data cannot be empty.',
         duration: 3000,
         backgroundColor: '#1E1E1E',
         textColor: 'white',
@@ -67,7 +67,7 @@ const Login = () => {
         password: loginData.password,
       });
 
-      setLoading(true); // Mulai loading spinner
+      setLoading(true); // Start loading spinner
 
       axios
         .post(`${appSettings.api}/auth/login`, {
@@ -90,13 +90,13 @@ const Login = () => {
             );
           } else {
             Snackbar.show({
-              text: 'Username atau password anda salah',
+              text: 'Username or password is incorrect',
               duration: 3000,
               backgroundColor: '#1E1E1E',
               textColor: 'white',
             });
           }
-          setLoading(false); // Selesai loading spinner
+          setLoading(false); // Stop loading spinner
         })
         .catch(async (err: any) => {
           console.log('Error:', err);

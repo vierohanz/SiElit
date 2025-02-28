@@ -5,7 +5,12 @@ import {
   StyleSheet,
   ImageBackground,
   ActivityIndicator,
+  Modal,
+  TouchableOpacity,
+  Pressable,
+  Image,
 } from 'react-native';
+
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
@@ -36,6 +41,7 @@ type RouteParams = {
   CardIzin: {newPermit?: any};
 };
 const CardIzin: React.FC<CardIzinProps> = ({item, isLast}) => {
+  const [modalVisible, setModalVisible] = useState(false);
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   // const [date, time] = item.start_date.split('T');
@@ -200,13 +206,41 @@ const CardIzin: React.FC<CardIzinProps> = ({item, isLast}) => {
             </View>
           </View>
           <View style={styles.imageContainer}>
-            <ImageBackground
-              source={{
-                uri: `${appSettings.api}${item.img_url}`,
-              }}
-              style={styles.imageBackground}
-              resizeMode="cover"
-            />
+            {/* Gambar Utama */}
+            <TouchableOpacity onPress={() => setModalVisible(true)}>
+              <ImageBackground
+                source={{uri: `${appSettings.api}${item.img_url}`}}
+                style={styles.imageBackground}
+                resizeMode="cover"
+              />
+            </TouchableOpacity>
+
+            {/* Modal untuk Gambar */}
+            <Modal
+              visible={modalVisible}
+              transparent={true}
+              animationType="fade"
+              onRequestClose={() => setModalVisible(false)}>
+              <View style={styles.modalBackground}>
+                <View style={styles.modalContent}>
+                  <Image
+                    source={{uri: `${appSettings.api}${item.img_url}`}}
+                    style={styles.modalImage}
+                    resizeMode="contain"
+                  />
+
+                  {/* Tombol Tutup */}
+                  <Pressable
+                    onPress={() => setModalVisible(false)}
+                    style={({pressed}) => [
+                      styles.closeButton,
+                      pressed && styles.closeButtonPressed, // Style tambahan saat ditekan
+                    ]}>
+                    <Text style={styles.closeButtonText}>Tutup</Text>
+                  </Pressable>
+                </View>
+              </View>
+            </Modal>
           </View>
         </>
       )}
@@ -215,6 +249,39 @@ const CardIzin: React.FC<CardIzinProps> = ({item, isLast}) => {
 };
 
 const styles = StyleSheet.create({
+  closeButtonPressed: {
+    backgroundColor: '#0e8077',
+  },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    width: '90%',
+    height: '70%',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 10,
+    alignItems: 'center',
+  },
+  modalImage: {
+    width: '100%',
+    height: '90%',
+    borderRadius: 10,
+  },
+  closeButton: {
+    marginTop: 10,
+    backgroundColor: '#13A89D',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
+  },
+  closeButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
   cardContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
