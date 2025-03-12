@@ -6,7 +6,9 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {AuthContext, AuthProvider} from './src/auth/AuthContext';
 import {AlertNotificationRoot} from 'react-native-alert-notification';
 import Toast from 'react-native-toast-message';
-
+import {Alert, Platform} from 'react-native';
+import {request, PERMISSIONS, RESULTS} from 'react-native-permissions';
+import {ALERT_TYPE, Dialog} from 'react-native-alert-notification';
 // Import your components
 import login from './src/pages/login';
 import splash from './src/pages/splash';
@@ -164,10 +166,22 @@ const App = () => {
         console.log('FCM token:', token);
       }
     };
-
+    requestPermissions();
     requestUserPermission();
   }, []);
-
+  const requestPermissions = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.requestMultiple([
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+        ]);
+      } catch (err) {
+        console.log('Error caught:', err);
+      }
+    }
+  };
   return (
     <AuthProvider>
       <AppNavigator />

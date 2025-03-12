@@ -58,7 +58,7 @@ const Perizinan = () => {
         Toast.show({
           type: 'error',
           text1: 'Error',
-          text2: 'Token tidak ditemukan. Tolong login lagi.',
+          text2: 'Token not found. Please log in again.',
         });
         setLoading(false);
         return;
@@ -74,15 +74,29 @@ const Perizinan = () => {
       const classesResponse = await axios.get(`${appSettings.api}/classes`, {
         headers: {Authorization: `Bearer ${token}`},
       });
-      const classItems = classesResponse.data.map((item: any) => ({
-        label: item.name, // Adjust this based on your API response
-        value: item.id,
-      }));
+      const classItems = classesResponse.data.map((item: any) => {
+        // Konversi start_date ke format DD/MM/YYYY
+        const formattedDate = new Date(item.start_date).toLocaleDateString(
+          'id-ID',
+          {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+          },
+        );
+
+        return {
+          label: `${item.name} (${formattedDate})`,
+          value: item.id,
+        };
+      });
+
       setKelasOptions(classItems);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
   const handleRefresh = async () => {
@@ -122,7 +136,7 @@ const Perizinan = () => {
         Toast.show({
           type: 'error',
           text1: 'Error',
-          text2: 'Token tidak ditemukan. Tolong login lagi.',
+          text2: 'Token not found. Please log in again.',
         });
       }
       setLoading(true);
@@ -140,7 +154,7 @@ const Perizinan = () => {
       Toast.show({
         type: 'success',
         text1: 'success',
-        text2: 'Berhasil membuat perizinan',
+        text2: 'Successfully created permission',
       });
       resetForm();
       handleRefresh();
@@ -151,14 +165,14 @@ const Perizinan = () => {
         Toast.show({
           type: 'error',
           text1: 'Error',
-          text2: 'Anda sudah izin sebelumnya',
+          text2: 'Permission already requested.',
         });
       } else {
         console.error('Error:', error);
         Toast.show({
           type: 'error',
           text1: 'Error',
-          text2: 'Terjadi kesalahan saat mengirim data.',
+          text2: 'Error sending data.',
         });
       }
       setLoading(false);
@@ -280,6 +294,7 @@ const Perizinan = () => {
 const styles = StyleSheet.create({
   teks: {
     color: '#000',
+    fontSize: hp('1.65%'),
   },
   itemContainer: {
     padding: 5,
@@ -319,7 +334,7 @@ const styles = StyleSheet.create({
   },
   textItem: {
     flex: 1,
-    fontSize: wp('4.3%'),
+    fontSize: wp('3.3%'),
     color: '#000000',
   },
   placeholderStyle: {

@@ -142,8 +142,9 @@ const EditProfileBottomSheet: React.FC<EditProfileBottomSheetProps> = ({
         Toast.show({
           type: 'success',
           text1: 'Success',
-          text2: response.data.msg || 'Update berhasil',
+          text2: response.data.msg || 'Update successful',
         });
+
         playSuccessSound();
         setPassword('');
         setPasswordNew('');
@@ -155,7 +156,7 @@ const EditProfileBottomSheet: React.FC<EditProfileBottomSheetProps> = ({
         Toast.show({
           type: 'error',
           text1: 'Update failed',
-          text2: response.data.msg || 'Gagal memperbarui data.',
+          text2: response.data.msg || 'Failed to update data.',
         });
       }
     } catch (error) {
@@ -166,7 +167,7 @@ const EditProfileBottomSheet: React.FC<EditProfileBottomSheetProps> = ({
             text1: 'Error',
             text2:
               error.response.data.msg ||
-              'Terjadi kesalahan saat memperbarui data.',
+              'An error occurred while updating data.',
           });
 
           if (error.response.status === 401) {

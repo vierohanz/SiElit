@@ -209,7 +209,7 @@ const Profile = () => {
           console.error('Error during sign out:', error);
         } finally {
           StatusBar.setBarStyle('light-content', true);
-          StatusBar.setBackgroundColor('rgba(0, 0, 0, 0.2)', true);
+
           StatusBar.setTranslucent(true);
         }
       },

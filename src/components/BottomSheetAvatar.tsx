@@ -18,8 +18,8 @@ const BottomSheetAvatar: React.FC<BottomSheetAvatarProps> = ({
     Toast.show({
       type: 'success',
       position: 'top',
-      text1: 'Sukses!',
-      text2: 'Foto profil berhasil diganti.',
+      text1: 'Success!',
+      text2: 'Profile picture updated successfully.',
       visibilityTime: 3000,
       autoHide: true,
     });

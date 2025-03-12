@@ -42,6 +42,11 @@ type jadwalUpcoming = {
   start_date: string;
   end_date: string;
 };
+
+type userCount = {
+  data: number;
+};
+
 type DataItem = {
   id: string;
   gradient: string[];
@@ -128,11 +133,37 @@ const renderItem: ListRenderItem<DataItem> = ({item}) => (
 const Home: React.FC = () => {
   const {selectedAvatar, setSelectedAvatar} = useProfile();
   const [jadwalUpcoming, setjadwalUpcoming] = useState<jadwalUpcoming[]>([]);
+  const [getUserCount, setgetUserCount] = useState<userCount>();
   const [username, setUsername] = useState<string | null>(null);
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const {logout} = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  const fetchGetUserCount = async () => {
+    const token = await AsyncStorage.getItem('accessToken');
+    console.log('Fetched Token:', token);
+    if (!token) {
+      console.log('No token found');
+      setLoading(false);
+      return;
+    }
+    try {
+      const response = await axios.get(
+        `${appSettings.api}/users/getUserCount`,
+        {
+          headers: {Authorization: `Bearer ${token}`},
+        },
+      );
+      console.log('Fetched Data:', response.data);
+      setgetUserCount(response.data);
+    } catch (error) {
+      console.error('Error fetching attendance data:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
   const fetchJadwalUpcoming = async () => {
     const token = await AsyncStorage.getItem('accessToken');
@@ -183,10 +214,12 @@ const Home: React.FC = () => {
 
     loadAvatar();
     fetchJadwalUpcoming();
+    fetchGetUserCount();
   }, [setSelectedAvatar]);
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     fetchJadwalUpcoming();
+    fetchGetUserCount();
     try {
       // Your refresh logic here
       await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate a network request
@@ -382,7 +415,7 @@ const Home: React.FC = () => {
                 color: '#13A89D',
                 fontSize: wp('6%'),
               }}>
-              165
+              {getUserCount?.data}
             </Text>
           </View>
         </View>

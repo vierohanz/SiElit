@@ -134,7 +134,6 @@ const Kalender_Akademik: React.FC = () => {
       <Agenda
         items={items}
         renderItem={renderItem}
-        selected={'2024-12-01'}
         theme={{
           agendaDayTextColor: '#000',
           agendaDayNumColor: '#000',

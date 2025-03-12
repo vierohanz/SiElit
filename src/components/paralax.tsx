@@ -31,7 +31,6 @@ const Parallax: React.FC = () => {
       </View>
     );
   };
-
   return (
     <View style={styles.container}>
       <Carousel
